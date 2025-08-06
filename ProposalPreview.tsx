@@ -12,6 +12,7 @@ const Footer: React.FC = () => (
 );
 
 type ProposalData = {
+    leadId: string;
     customerName: string;
     customerAddress: string;
     proposalDate: string;
@@ -55,7 +56,8 @@ const ProposalPreview: React.FC = () => {
         
         const payload = {
             'שלב': 2,
-            'לינק למסמך חתום': finalLink
+            'לינק למסמך חתום': finalLink,
+            'מזהה_לקוח_CRM': proposalData.leadId
         };
 
         try {

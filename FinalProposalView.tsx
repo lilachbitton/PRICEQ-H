@@ -6,6 +6,7 @@ import TermsAndConditions from './TermsAndConditions';
 import { decodeData } from './App';
 
 type FinalProposalData = {
+    leadId: string;
     customerName: string;
     customerAddress: string;
     proposalDate: string;

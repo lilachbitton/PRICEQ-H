@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { UnitOfMeasure, WorkItem, PaymentTerm } from './types';
 import { HeaderLogo, TrashIcon } from './SharedComponents';
 import { encodeData } from './App';
@@ -123,8 +124,15 @@ const PaymentTermRow = React.memo(({ item, index, totalProposalAmount, onUpdate,
 const WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
 
 const ProposalEditor: React.FC = () => {
-    const [customerName, setCustomerName] = useState('');
-    const [customerAddress, setCustomerAddress] = useState('');
+    const [searchParams] = useSearchParams();
+    
+    const [leadId, setLeadId] = useState(searchParams.get('leadId') || '');
+    const [customerName, setCustomerName] = useState(() => {
+        const firstName = searchParams.get('firstName') || '';
+        const lastName = searchParams.get('lastName') || '';
+        return [firstName, lastName].filter(Boolean).join(' ').trim();
+    });
+    const [customerAddress, setCustomerAddress] = useState(searchParams.get('address') || '');
     const [proposalDate, setProposalDate] = useState(new Date().toLocaleDateString('he-IL'));
     const [workItems, setWorkItems] = useState<WorkItem[]>([
         { id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }
@@ -187,6 +195,7 @@ const ProposalEditor: React.FC = () => {
         setIsGenerating(true);
 
         const proposalBaseData = {
+            leadId,
             customerName,
             customerAddress,
             proposalDate,
@@ -200,7 +209,8 @@ const ProposalEditor: React.FC = () => {
         
         const payload = {
             'שלב': 1,
-            'לינק למילוי הלקוח': link
+            'לינק למילוי הלקוח': link,
+            'מזהה_לקוח_CRM': leadId
         };
 
         try {
