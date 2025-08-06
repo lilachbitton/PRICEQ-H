@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { WorkItem, PaymentTerm, ClientDetails } from './types';
 import { Watermark } from './SharedComponents';
 import TermsAndConditions from './TermsAndConditions';
+import { decodeData } from './App';
 
-interface FinalProposalViewProps {
+type FinalProposalData = {
     customerName: string;
     customerAddress: string;
     proposalDate: string;
@@ -13,8 +15,7 @@ interface FinalProposalViewProps {
     finalPaymentAmount: number;
     clientDetails: ClientDetails;
     clientSignature: string;
-    onBackToPreview: () => void;
-}
+};
 
 const Footer: React.FC = () => (
     <div className="text-center text-xs text-gray-700 border-t-2 border-green-700 pt-3 mt-16">
@@ -22,18 +23,36 @@ const Footer: React.FC = () => (
     </div>
 );
 
-const FinalProposalView: React.FC<FinalProposalViewProps> = ({
-    customerName,
-    customerAddress,
-    proposalDate,
-    workItems,
-    totalProposalAmount,
-    paymentTerms,
-    finalPaymentAmount,
-    clientDetails,
-    clientSignature,
-    onBackToPreview,
-}) => {
+const FinalProposalView: React.FC = () => {
+    const { data: encodedData } = useParams<{ data: string }>();
+    const navigate = useNavigate();
+
+    const finalData = useMemo(() => decodeData<FinalProposalData>(encodedData), [encodedData]);
+    
+    if (!finalData) {
+        return (
+            <div className="text-center p-10 bg-white shadow-lg rounded-md">
+                <h2 className="text-2xl font-bold text-red-600">שגיאה</h2>
+                <p className="mt-4">הנתונים של הצעת המחיר אינם תקינים או שהקישור פגום.</p>
+                <button onClick={() => navigate('/')} className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                    חזור לעמוד הראשי
+                </button>
+            </div>
+        );
+    }
+    
+    const {
+        customerName,
+        customerAddress,
+        proposalDate,
+        workItems,
+        totalProposalAmount,
+        paymentTerms,
+        finalPaymentAmount,
+        clientDetails,
+        clientSignature,
+    } = finalData;
+
     const totalWithVat = useMemo(() => totalProposalAmount * 1.17, [totalProposalAmount]);
 
     return (
@@ -161,8 +180,8 @@ const FinalProposalView: React.FC<FinalProposalViewProps> = ({
             </div>
 
             <div className="mt-8 flex justify-between items-center print:hidden max-w-4xl mx-auto">
-                <button onClick={onBackToPreview} className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors">
-                    חזרה לפרטי לקוח
+                <button onClick={() => navigate(-1)} className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors">
+                    חזרה לטופס החתימה
                 </button>
                  <button onClick={() => window.print()} className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors">
                     הדפס הצעה

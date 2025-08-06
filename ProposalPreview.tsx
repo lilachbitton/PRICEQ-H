@@ -1,23 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { WorkItem, PaymentTerm, ClientDetails } from './types';
 import { Watermark } from './SharedComponents';
 import TermsAndConditions from './TermsAndConditions';
-
-interface ProposalPreviewProps {
-    customerName: string;
-    customerAddress: string;
-    proposalDate: string;
-    workItems: WorkItem[];
-    totalProposalAmount: number;
-    paymentTerms: PaymentTerm[];
-    finalPaymentAmount: number;
-    clientDetails: ClientDetails;
-    onClientDetailsChange: (field: keyof ClientDetails, value: string) => void;
-    clientSignature: string;
-    onClientSignatureChange: (signature: string) => void;
-    onBack: () => void;
-    onConfirm: () => void;
-}
+import { decodeData, encodeData } from './App';
 
 const Footer: React.FC = () => (
     <div className="text-center text-xs text-gray-700 border-t-2 border-green-700 pt-3 mt-16">
@@ -25,22 +11,68 @@ const Footer: React.FC = () => (
     </div>
 );
 
-const ProposalPreview: React.FC<ProposalPreviewProps> = ({
-    customerName,
-    customerAddress,
-    proposalDate,
-    workItems,
-    totalProposalAmount,
-    paymentTerms,
-    finalPaymentAmount,
-    clientDetails,
-    onClientDetailsChange,
-    clientSignature,
-    onClientSignatureChange,
-    onBack,
-    onConfirm,
-}) => {
+type ProposalData = {
+    customerName: string;
+    customerAddress: string;
+    proposalDate: string;
+    workItems: WorkItem[];
+    totalProposalAmount: number;
+    paymentTerms: PaymentTerm[];
+    finalPaymentAmount: number;
+};
+
+const ProposalPreview: React.FC = () => {
+    const { data: encodedData } = useParams<{ data: string }>();
+    const navigate = useNavigate();
+
+    const proposalData = useMemo(() => decodeData<ProposalData>(encodedData), [encodedData]);
+
+    const [clientDetails, setClientDetails] = useState<ClientDetails>({
+        firstName: '',
+        lastName: '',
+        idNumber: '',
+    });
+    const [clientSignature, setClientSignature] = useState('');
+
+    const onClientDetailsChange = (field: keyof ClientDetails, value: string) => {
+        setClientDetails(prev => ({...prev, [field]: value}));
+    };
+
+    const handleConfirm = () => {
+        if (!proposalData) return;
+        const finalData = {
+            ...proposalData,
+            clientDetails,
+            clientSignature,
+        };
+        const encodedFinalData = encodeData(finalData);
+        navigate(`/final/${encodedFinalData}`);
+    };
+
+    if (!proposalData) {
+        return (
+            <div className="text-center p-10 bg-white shadow-lg rounded-md">
+                <h2 className="text-2xl font-bold text-red-600">שגיאה</h2>
+                <p className="mt-4">הנתונים של הצעת המחיר אינם תקינים או שהקישור פגום.</p>
+                <button onClick={() => navigate('/')} className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                    חזור לעמוד הראשי
+                </button>
+            </div>
+        );
+    }
+    
+    const {
+        customerName,
+        customerAddress,
+        proposalDate,
+        workItems,
+        totalProposalAmount,
+        paymentTerms,
+        finalPaymentAmount,
+    } = proposalData;
+    
     const totalWithVat = useMemo(() => totalProposalAmount * 1.17, [totalProposalAmount]);
+    const isClientDataValid = clientDetails.firstName && clientDetails.lastName && clientDetails.idNumber && clientSignature;
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -146,6 +178,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                                     value={clientDetails.firstName}
                                     onChange={(e) => onClientDetailsChange('firstName', e.target.value)}
                                     className="mt-1 block w-full px-3 py-2 bg-white border-b border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    required
                                 />
                             </div>
                             <div>
@@ -156,6 +189,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                                     value={clientDetails.lastName}
                                     onChange={(e) => onClientDetailsChange('lastName', e.target.value)}
                                     className="mt-1 block w-full px-3 py-2 bg-white border-b border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    required
                                 />
                             </div>
                             <div>
@@ -166,6 +200,7 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                                     value={clientDetails.idNumber}
                                     onChange={(e) => onClientDetailsChange('idNumber', e.target.value)}
                                     className="mt-1 block w-full px-3 py-2 bg-white border-b border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                    required
                                 />
                             </div>
                         </div>
@@ -175,9 +210,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                                     type="text"
                                     placeholder="הקלד שם מלא לחתימה"
                                     value={clientSignature}
-                                    onChange={(e) => onClientSignatureChange(e.target.value)}
+                                    onChange={(e) => setClientSignature(e.target.value)}
                                     className="w-full px-3 py-2 bg-transparent border-b-2 border-dotted border-gray-600 focus:outline-none focus:border-solid focus:border-black text-center text-lg font-serif"
                                     aria-label="שם הלקוח לחתימה"
+                                    required
                                 />
                                 <p className="text-center font-bold mt-1">חתימה</p>
                             </div>
@@ -191,12 +227,13 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
                 </div>
             </div>
 
-            <div className="mt-8 flex justify-between items-center print:hidden max-w-4xl mx-auto">
-                <button onClick={onBack} className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 transition-colors">
-                    חזרה לעריכה
-                </button>
-                 <button onClick={onConfirm} className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition-colors">
-                    אישור והצגה סופית
+            <div className="mt-8 flex justify-center items-center print:hidden max-w-4xl mx-auto">
+                 <button 
+                    onClick={handleConfirm} 
+                    disabled={!isClientDataValid}
+                    className="bg-green-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                    שלח מסמך
                 </button>
             </div>
         </div>

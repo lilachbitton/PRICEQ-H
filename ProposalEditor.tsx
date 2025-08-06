@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { UnitOfMeasure, WorkItem, PaymentTerm } from './types';
 import { HeaderLogo, TrashIcon } from './SharedComponents';
+import { encodeData } from './App';
 
 interface WorkItemRowProps {
   item: WorkItem;
@@ -119,34 +120,92 @@ const PaymentTermRow = React.memo(({ item, index, totalProposalAmount, onUpdate,
     );
 });
 
-interface ProposalEditorProps {
-    customerName: string;
-    setCustomerName: (name: string) => void;
-    customerAddress: string;
-    setCustomerAddress: (address: string) => void;
-    proposalDate: string;
-    setProposalDate: (date: string) => void;
-    workItems: WorkItem[];
-    addWorkItem: () => void;
-    updateWorkItem: (id: string, field: keyof Omit<WorkItem, 'id'>, value: string | number) => void;
-    removeWorkItem: (id: string) => void;
-    totalProposalAmount: number;
-    paymentTerms: PaymentTerm[];
-    addPaymentTerm: () => void;
-    updatePaymentTerm: (id: string, field: keyof Omit<PaymentTerm, 'id'>, value: string | number) => void;
-    removePaymentTerm: (id: string) => void;
-    finalPaymentAmount: number;
-    totalPaymentPercentage: number;
-    isPaymentScheduleValid: boolean;
-    onContinue: () => void;
-}
+const ProposalEditor: React.FC = () => {
+    const [customerName, setCustomerName] = useState('');
+    const [customerAddress, setCustomerAddress] = useState('');
+    const [proposalDate, setProposalDate] = useState(new Date().toLocaleDateString('he-IL'));
+    const [workItems, setWorkItems] = useState<WorkItem[]>([
+        { id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }
+    ]);
+    const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>([
+        { id: crypto.randomUUID(), percentage: 50, milestone: 'עם תחילת העבודה' }
+    ]);
+    const [generatedLink, setGeneratedLink] = useState('');
+    const [copySuccess, setCopySuccess] = useState('');
 
-const ProposalEditor: React.FC<ProposalEditorProps> = ({
-    customerName, setCustomerName, customerAddress, setCustomerAddress, proposalDate, setProposalDate,
-    workItems, addWorkItem, updateWorkItem, removeWorkItem, totalProposalAmount,
-    paymentTerms, addPaymentTerm, updatePaymentTerm, removePaymentTerm, finalPaymentAmount,
-    totalPaymentPercentage, isPaymentScheduleValid, onContinue
-}) => {
+
+    const addWorkItem = () => {
+        setWorkItems(prev => [...prev, { id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }]);
+    };
+    
+    const updateWorkItem = (id: string, field: keyof Omit<WorkItem, 'id'>, value: string | number) => {
+        setWorkItems(prev => prev.map(item => item.id === id ? { ...item, [field]: value } : item));
+        setGeneratedLink('');
+    };
+
+    const removeWorkItem = (id: string) => {
+        if (workItems.length > 1) {
+            setWorkItems(prev => prev.filter(item => item.id !== id));
+        }
+        setGeneratedLink('');
+    };
+    
+    const addPaymentTerm = () => {
+        setPaymentTerms(prev => [...prev, { id: crypto.randomUUID(), percentage: 0, milestone: '' }]);
+    };
+    
+    const updatePaymentTerm = (id: string, field: keyof Omit<PaymentTerm, 'id'>, value: string | number) => {
+        setPaymentTerms(prev => prev.map(term => term.id === id ? { ...term, [field]: value } : term));
+        setGeneratedLink('');
+    };
+
+    const removePaymentTerm = (id: string) => {
+        if (paymentTerms.length > 1) {
+            setPaymentTerms(prev => prev.filter(term => term.id !== id));
+        }
+        setGeneratedLink('');
+    };
+
+    const totalProposalAmount = useMemo(() => {
+        return workItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+    }, [workItems]);
+
+    const finalPaymentAmount = useMemo(() => totalProposalAmount * 0.05, [totalProposalAmount]);
+
+    const totalPaymentPercentage = useMemo(() => {
+        const userTermsPercentage = paymentTerms.reduce((sum, term) => sum + Number(term.percentage), 0);
+        return userTermsPercentage + 5;
+    }, [paymentTerms]);
+    
+    const isPaymentScheduleValid = Math.round(totalPaymentPercentage) === 100;
+
+    const handleGenerateLink = () => {
+        if (!isPaymentScheduleValid || totalProposalAmount <= 0) return;
+
+        const proposalBaseData = {
+            customerName,
+            customerAddress,
+            proposalDate,
+            workItems,
+            paymentTerms,
+            totalProposalAmount,
+            finalPaymentAmount,
+        };
+        const encoded = encodeData(proposalBaseData);
+        const link = `${window.location.origin}${window.location.pathname}#/proposal/${encoded}`;
+        setGeneratedLink(link);
+        setCopySuccess('');
+    };
+    
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(generatedLink).then(() => {
+            setCopySuccess('הועתק!');
+            setTimeout(() => setCopySuccess(''), 2000);
+        }, () => {
+            setCopySuccess('נכשל');
+        });
+    };
+
     return (
         <div className="bg-white shadow-xl rounded-lg p-8 my-10" dir="rtl">
             <HeaderLogo />
@@ -262,13 +321,35 @@ const ProposalEditor: React.FC<ProposalEditorProps> = ({
 
             <div className="mt-12 text-center">
                 <button
-                    onClick={onContinue}
-                    disabled={!isPaymentScheduleValid || totalProposalAmount <= 0}
+                    onClick={handleGenerateLink}
+                    disabled={!isPaymentScheduleValid || totalProposalAmount <= 0 || !!generatedLink}
                     className="bg-green-600 text-white px-10 py-3 rounded-lg text-xl font-bold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                    {isPaymentScheduleValid ? 'המשך לשלב הבא' : 'יש להתאים את התשלומים ל-100%'}
+                    {isPaymentScheduleValid ? 'צור קישור לשליחה ללקוח' : 'יש להתאים את התשלומים ל-100%'}
                 </button>
             </div>
+             {generatedLink && (
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg text-center page-break-avoid border border-green-200">
+                    <h3 className="text-lg font-semibold text-gray-800">קישור להצעת מחיר מוכן לשליחה</h3>
+                    <p className="text-sm text-gray-600 mb-3">שלח קישור זה ללקוח למילוי פרטים וחתימה. כל שינוי בטפסים יצריך יצירת קישור חדש.</p>
+                    <div className="flex items-center gap-2 max-w-2xl mx-auto">
+                        <input 
+                            type="text"
+                            readOnly
+                            value={generatedLink}
+                            className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-sm"
+                            aria-label="Generated proposal link"
+                            onFocus={(e) => e.target.select()}
+                        />
+                        <button 
+                            onClick={copyToClipboard} 
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors shrink-0 w-24"
+                        >
+                            {copySuccess || 'העתק'}
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
