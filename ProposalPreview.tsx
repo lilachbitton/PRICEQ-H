@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { WorkItem, PaymentTerm, ClientDetails } from './types';
-import { ProposalHeaderStrip, HeaderLogo, Watermark } from './SharedComponents';
+import { Watermark } from './SharedComponents';
 import TermsAndConditions from './TermsAndConditions';
 
 interface ProposalPreviewProps {
@@ -21,17 +21,7 @@ interface ProposalPreviewProps {
 
 const Footer: React.FC = () => (
     <div className="text-center text-xs text-gray-700 border-t-2 border-green-700 pt-3 mt-16">
-        <p className="font-bold text-base text-black font-serif">חגי תדמור מעיין גנים בע"מ - אמן נוף</p>
-        <p className="my-1"><a href="http://www.m-ganim.com" className="text-blue-600 hover:underline">www.m-ganim.com</a></p>
-        <p>
-            <span>הורד 40, גן יבנה - 08-9420084, חגי: 054-5557492</span>
-            <span className="mx-1">•</span>
-            <span>hagay@m-ganim.com</span>
-            <span className="mx-1">•</span>
-            <span>ח.פ. 516519857</span>
-            <span className="mx-1">•</span>
-            <span>קבלן רשום מס' 25536</span>
-        </p>
+        <img src="/footer.png" alt="Hagay Tadmor contact details" className="w-full" />
     </div>
 );
 
@@ -56,11 +46,10 @@ const ProposalPreview: React.FC<ProposalPreviewProps> = ({
         <div className="max-w-4xl mx-auto">
             <div className="bg-white shadow-xl my-10 relative print:shadow-none print:my-0" dir="rtl">
                 <Watermark />
-                <ProposalHeaderStrip />
+                <img src="/header.png" alt="Hagay Tadmor Landscape Artist" className="w-full print-exact" />
                 <div className="p-8 md:p-12 relative z-10">
-                    <HeaderLogo />
-
-                    <div className="flex justify-between items-end mb-8 border-b-2 border-gray-200 pb-4">
+                    
+                    <div className="flex justify-between items-end mb-8 border-b-2 border-gray-200 pb-4 mt-8">
                         <div className="space-y-2 text-lg">
                             <p><span className="font-bold">לכבוד:</span> {customerName || '________________'}</p>
                             <p><span className="font-bold">כתובת:</span> {customerAddress || '________________'}</p>

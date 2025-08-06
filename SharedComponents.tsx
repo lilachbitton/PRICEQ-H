@@ -6,7 +6,7 @@ export const TrashIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
-const LOGO_URL = "http://www.m-ganim.com/images/logo.png";
+const LOGO_URL = "/logo.png";
 
 export const HeaderLogo: React.FC = () => (
     <div className="flex justify-center items-center my-4">
@@ -21,22 +21,5 @@ export const Watermark: React.FC = () => (
             alt="Watermark" 
             className="w-3/5 opacity-5"
         />
-    </div>
-);
-
-const HEADER_IMAGES = [
-  "http://www.m-ganim.com/uploads/1/6/7/6/16762338/background-images/1384849348.jpg",
-  "http://www.m-ganim.com/uploads/1/6/7/6/16762338/published/p1000627.jpg?1542888599",
-  "http://www.m-ganim.com/uploads/1/6/7/6/16762338/p1000570_orig.jpg",
-  "http://www.m-ganim.com/uploads/1/6/7/6/16762338/p1000539_orig.jpg",
-];
-
-export const ProposalHeaderStrip: React.FC = () => (
-    <div className="grid grid-cols-4 print-exact">
-        {HEADER_IMAGES.map((src, index) => (
-            <div key={index} className="h-28 sm:h-32 md:h-40">
-                <img src={src} alt={`Header image ${index + 1}`} className="w-full h-full object-cover" />
-            </div>
-        ))}
     </div>
 );
