@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { UnitOfMeasure, WorkItem, PaymentTerm } from './types';
 import { HeaderLogo, TrashIcon } from './SharedComponents';
 import { encodeData } from './App';
@@ -124,15 +123,16 @@ const PaymentTermRow = React.memo(({ item, index, totalProposalAmount, onUpdate,
 const WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
 
 const ProposalEditor: React.FC = () => {
-    const [searchParams] = useSearchParams();
+    // Using native URLSearchParams on the window.location.search for robust initial state population.
+    const initialSearchParams = new URLSearchParams(window.location.search);
     
-    const [leadId, setLeadId] = useState(searchParams.get('leadId') || '');
+    const [leadId, setLeadId] = useState(initialSearchParams.get('leadId') || '');
     const [customerName, setCustomerName] = useState(() => {
-        const firstName = searchParams.get('firstName') || '';
-        const lastName = searchParams.get('lastName') || '';
+        const firstName = initialSearchParams.get('firstName') || '';
+        const lastName = initialSearchParams.get('lastName') || '';
         return [firstName, lastName].filter(Boolean).join(' ').trim();
     });
-    const [customerAddress, setCustomerAddress] = useState(searchParams.get('address') || '');
+    const [customerAddress, setCustomerAddress] = useState(initialSearchParams.get('address') || '');
     const [proposalDate, setProposalDate] = useState(new Date().toLocaleDateString('he-IL'));
     const [workItems, setWorkItems] = useState<WorkItem[]>([
         { id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }
