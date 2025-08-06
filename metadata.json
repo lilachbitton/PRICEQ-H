@@ -1,0 +1,6 @@
+{
+  "name": "Work Proposal Generator",
+  "description": "An application for creating and managing work proposals, based on the Hagay Tadmor Landscape Artist format. Users can add work items, define payment terms, and generate a proposal.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
