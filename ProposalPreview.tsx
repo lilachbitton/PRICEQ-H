@@ -21,6 +21,8 @@ type ProposalData = {
     finalPaymentAmount: number;
 };
 
+const WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
+
 const ProposalPreview: React.FC = () => {
     const { data: encodedData } = useParams<{ data: string }>();
     const navigate = useNavigate();
@@ -33,19 +35,40 @@ const ProposalPreview: React.FC = () => {
         idNumber: '',
     });
     const [clientSignature, setClientSignature] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const onClientDetailsChange = (field: keyof ClientDetails, value: string) => {
         setClientDetails(prev => ({...prev, [field]: value}));
     };
 
-    const handleConfirm = () => {
-        if (!proposalData) return;
+    const handleConfirm = async () => {
+        if (!proposalData || !isClientDataValid) return;
+        setIsSubmitting(true);
+
         const finalData = {
             ...proposalData,
             clientDetails,
             clientSignature,
         };
         const encodedFinalData = encodeData(finalData);
+        const finalLink = `${window.location.origin}${window.location.pathname}#/final/${encodedFinalData}`;
+        
+        const payload = {
+            'שלב': 2,
+            'לינק למסמך חתום': finalLink
+        };
+
+        try {
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } catch (error) {
+            console.error('Webhook for stage 2 failed:', error);
+             // Non-critical error, so we continue the flow
+        }
+
         navigate(`/final/${encodedFinalData}`);
     };
 
@@ -230,10 +253,10 @@ const ProposalPreview: React.FC = () => {
             <div className="mt-8 flex justify-center items-center print:hidden max-w-4xl mx-auto">
                  <button 
                     onClick={handleConfirm} 
-                    disabled={!isClientDataValid}
+                    disabled={!isClientDataValid || isSubmitting}
                     className="bg-green-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                    שלח מסמך
+                    {isSubmitting ? 'שולח...' : 'שלח מסמך'}
                 </button>
             </div>
         </div>

@@ -120,6 +120,8 @@ const PaymentTermRow = React.memo(({ item, index, totalProposalAmount, onUpdate,
     );
 });
 
+const WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
+
 const ProposalEditor: React.FC = () => {
     const [customerName, setCustomerName] = useState('');
     const [customerAddress, setCustomerAddress] = useState('');
@@ -132,6 +134,7 @@ const ProposalEditor: React.FC = () => {
     ]);
     const [generatedLink, setGeneratedLink] = useState('');
     const [copySuccess, setCopySuccess] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
 
 
     const addWorkItem = () => {
@@ -179,8 +182,9 @@ const ProposalEditor: React.FC = () => {
     
     const isPaymentScheduleValid = Math.round(totalPaymentPercentage) === 100;
 
-    const handleGenerateLink = () => {
+    const handleGenerateLink = async () => {
         if (!isPaymentScheduleValid || totalProposalAmount <= 0) return;
+        setIsGenerating(true);
 
         const proposalBaseData = {
             customerName,
@@ -193,8 +197,26 @@ const ProposalEditor: React.FC = () => {
         };
         const encoded = encodeData(proposalBaseData);
         const link = `${window.location.origin}${window.location.pathname}#/proposal/${encoded}`;
+        
+        const payload = {
+            'שלב': 1,
+            'לינק למילוי הלקוח': link
+        };
+
+        try {
+            await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } catch (error) {
+            console.error('Webhook for stage 1 failed:', error);
+            // Non-critical error, so we continue the flow
+        }
+
         setGeneratedLink(link);
         setCopySuccess('');
+        setIsGenerating(false);
     };
     
     const copyToClipboard = () => {
@@ -219,7 +241,7 @@ const ProposalEditor: React.FC = () => {
                             type="text"
                             placeholder="שם הלקוח"
                             value={customerName}
-                            onChange={(e) => setCustomerName(e.target.value)}
+                            onChange={(e) => { setCustomerName(e.target.value); setGeneratedLink(''); }}
                             className="p-1 border-b-2 border-gray-300 focus:border-blue-500 outline-none flex-grow"
                         />
                     </div>
@@ -230,7 +252,7 @@ const ProposalEditor: React.FC = () => {
                             type="text"
                             placeholder="כתובת הלקוח"
                             value={customerAddress}
-                            onChange={(e) => setCustomerAddress(e.target.value)}
+                            onChange={(e) => { setCustomerAddress(e.target.value); setGeneratedLink(''); }}
                             className="p-1 border-b-2 border-gray-300 focus:border-blue-500 outline-none flex-grow"
                         />
                     </div>
@@ -241,7 +263,7 @@ const ProposalEditor: React.FC = () => {
                         id="proposalDate"
                         type="text"
                         value={proposalDate}
-                        onChange={(e) => setProposalDate(e.target.value)}
+                        onChange={(e) => { setProposalDate(e.target.value); setGeneratedLink(''); }}
                         className="p-1 border-b-2 border-gray-300 focus:border-blue-500 outline-none w-32"
                     />
                 </div>
@@ -322,10 +344,10 @@ const ProposalEditor: React.FC = () => {
             <div className="mt-12 text-center">
                 <button
                     onClick={handleGenerateLink}
-                    disabled={!isPaymentScheduleValid || totalProposalAmount <= 0 || !!generatedLink}
+                    disabled={!isPaymentScheduleValid || totalProposalAmount <= 0 || !!generatedLink || isGenerating}
                     className="bg-green-600 text-white px-10 py-3 rounded-lg text-xl font-bold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                    {isPaymentScheduleValid ? 'צור קישור לשליחה ללקוח' : 'יש להתאים את התשלומים ל-100%'}
+                    {isGenerating ? 'יוצר קישור...' : (isPaymentScheduleValid ? 'צור קישור לשליחה ללקוח' : 'יש להתאים את התשלומים ל-100%')}
                 </button>
             </div>
              {generatedLink && (
