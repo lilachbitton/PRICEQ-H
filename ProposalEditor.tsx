@@ -38,8 +38,8 @@ const WorkItemRow = React.memo(({ item, index, onUpdate, onRemove }: WorkItemRow
             <td className="p-2 w-32 align-top">
                 <input
                     type="number"
-                    value={item.quantity}
-                    onFocus={(e) => e.target.select()}
+                    value={item.quantity === 0 ? '' : item.quantity}
+                    placeholder="0"
                     onChange={(e) => onUpdate(item.id, 'quantity', parseFloat(e.target.value) || 0)}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
                     min="0"
@@ -49,8 +49,8 @@ const WorkItemRow = React.memo(({ item, index, onUpdate, onRemove }: WorkItemRow
             <td className="p-2 w-32 align-top">
                 <input
                     type="number"
-                    value={item.price}
-                    onFocus={(e) => e.target.select()}
+                    value={item.price === 0 ? '' : item.price}
+                    placeholder="0"
                     onChange={(e) => onUpdate(item.id, 'price', parseFloat(e.target.value) || 0)}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
                     min="0"
@@ -140,7 +140,7 @@ const ProposalEditor: React.FC = () => {
         { id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }
     ]);
     const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>([
-        { id: crypto.randomUUID(), percentage: 50, milestone: 'עם תחילת העבודה' }
+        { id: crypto.randomUUID(), percentage: 95, milestone: 'עם תחילת העבודה' }
     ]);
     const [generatedLink, setGeneratedLink] = useState('');
     const [copySuccess, setCopySuccess] = useState('');
