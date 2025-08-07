@@ -39,6 +39,7 @@ const WorkItemRow = React.memo(({ item, index, onUpdate, onRemove }: WorkItemRow
                 <input
                     type="number"
                     value={item.quantity}
+                    onFocus={(e) => e.target.select()}
                     onChange={(e) => onUpdate(item.id, 'quantity', parseFloat(e.target.value) || 0)}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
                     min="0"
@@ -49,6 +50,7 @@ const WorkItemRow = React.memo(({ item, index, onUpdate, onRemove }: WorkItemRow
                 <input
                     type="number"
                     value={item.price}
+                    onFocus={(e) => e.target.select()}
                     onChange={(e) => onUpdate(item.id, 'price', parseFloat(e.target.value) || 0)}
                     className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
                     min="0"
@@ -162,7 +164,17 @@ const ProposalEditor: React.FC = () => {
     };
     
     const addPaymentTerm = () => {
-        setPaymentTerms(prev => [...prev, { id: crypto.randomUUID(), percentage: 0, milestone: '' }]);
+        setPaymentTerms(prev => {
+            const currentPercentage = prev.reduce((sum, term) => sum + Number(term.percentage), 0);
+            // The total should be 100, and 5% is fixed for the end. So we work with 95%.
+            const remaining = 95 - currentPercentage;
+            
+            // Ensure the new percentage isn't negative.
+            const newPercentage = Math.max(0, remaining);
+
+            return [...prev, { id: crypto.randomUUID(), percentage: newPercentage, milestone: '' }];
+        });
+        setGeneratedLink('');
     };
     
     const updatePaymentTerm = (id: string, field: keyof Omit<PaymentTerm, 'id'>, value: string | number) => {
