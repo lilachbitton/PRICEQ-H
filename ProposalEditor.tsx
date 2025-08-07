@@ -210,7 +210,8 @@ const ProposalEditor: React.FC = () => {
         const payload = {
             'שלב': 1,
             'לינק למילוי הלקוח': link,
-            'מזהה_לקוח_CRM': leadId
+            'מזהה_לקוח_CRM': leadId,
+            'סה"כ ההצעה לפני מע"מ': totalProposalAmount
         };
 
         try {
