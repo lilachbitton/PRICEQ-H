@@ -45,7 +45,7 @@ export const decodeData = <T extends {}>(encoded: string | undefined): T | null 
 
 export default function App() {
     return (
-        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 print:p-0 print:max-w-full">
+        <div className="max-w-7xl mx-auto p-3 sm:p-6 lg:p-8 print:p-0 print:max-w-full">
             <Routes>
                 <Route path="/" element={<ProposalEditor />} />
                 <Route path="/proposal/:data" element={<ProposalPreview />} />
