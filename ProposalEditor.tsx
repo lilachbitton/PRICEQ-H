@@ -295,73 +295,77 @@ const ProposalEditor: React.FC = () => {
             <h2 className="text-3xl font-serif text-center text-gray-800 mb-4">הצעה/הזמנה לביצוע עבודה</h2>
             <p className="text-lg mb-6">שלום רב, לבקשתך הריני מציע לבצע עבורך את העבודות הבאות, המחירים אינם כוללים מע"מ:</p>
 
-            {/* Work Items Table */}
+            {/* Work Items Section */}
             <div className="mb-10">
-                <table className="w-full text-right border-collapse responsive-table" aria-label="Work Items">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="p-3 w-12 text-center">מס'</th>
-                            <th className="p-3">פירוט העבודה</th>
-                            <th className="p-3 w-32">יח' מידה</th>
-                            <th className="p-3 w-32">כמות</th>
-                            <th className="p-3 w-32">מחיר יח'</th>
-                            <th className="p-3 w-32">סה"כ</th>
-                            <th className="p-3 w-16"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {workItems.map((item, index) => (
-                            <WorkItemRow key={item.id} item={item} index={index} onUpdate={updateWorkItem} onRemove={removeWorkItem} />
-                        ))}
-                    </tbody>
-                </table>
-                <div className="mt-4 flex flex-col-reverse gap-4 md:flex-row md:justify-between md:items-center">
-                    <button onClick={addWorkItem} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-semibold">הוסף שורה</button>
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <button onClick={addWorkItem} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-semibold w-full md:w-auto">הוסף שורה</button>
                     <div className="text-lg md:text-xl font-bold text-gray-800 bg-gray-100 p-3 rounded-md w-full md:w-auto text-center">
                         <span>סה"כ לכל ההצעה לפני מע"מ: </span>
                         <span>{totalProposalAmount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</span>
                     </div>
                 </div>
+                <div className="overflow-x-auto mt-4">
+                    <table className="w-full text-right border-collapse responsive-table" aria-label="Work Items">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="p-3 w-12 text-center">מס'</th>
+                                <th className="p-3">פירוט העבודה</th>
+                                <th className="p-3 w-32">יח' מידה</th>
+                                <th className="p-3 w-32">כמות</th>
+                                <th className="p-3 w-32">מחיר יח'</th>
+                                <th className="p-3 w-32">סה"כ</th>
+                                <th className="p-3 w-16"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {workItems.map((item, index) => (
+                                <WorkItemRow key={item.id} item={item} index={index} onUpdate={updateWorkItem} onRemove={removeWorkItem} />
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            {/* Payment Terms Table */}
+            {/* Payment Terms Section */}
             <div className="mb-10">
                  <h3 className="text-2xl font-serif text-gray-800 mb-4">תנאי תשלום</h3>
-                <table className="w-full text-right border-collapse responsive-table" aria-label="Payment Terms">
-                    <thead className="bg-gray-100">
-                        <tr>
-                            <th className="p-3 w-12 text-center">מס'</th>
-                            <th className="p-3 w-40 text-center">הסכום</th>
-                            <th className="p-3 w-40 text-center">חלק התשלום (%)</th>
-                            <th className="p-3">מועד התשלום</th>
-                            <th className="p-3 w-16"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {paymentTerms.map((term, index) => (
-                            <PaymentTermRow key={term.id} item={term} index={index} totalProposalAmount={totalProposalAmount} onUpdate={updatePaymentTerm} onRemove={removePaymentTerm} />
-                        ))}
-                         <tr className="border-t border-gray-200 bg-gray-50 md:border-t-0">
-                            <td data-label="מס'" className="p-3 text-center">{paymentTerms.length + 1}</td>
-                            <td data-label="הסכום" className="p-3 font-semibold text-left md:text-center">{finalPaymentAmount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
-                            <td data-label="חלק התשלום (%)" className="p-3 font-semibold text-left md:text-center">5%</td>
-                            <td data-label="מועד התשלום" className="p-3 font-semibold">בסיום העבודה</td>
-                            <td className="actions-cell"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div className="mt-4 flex flex-col-reverse gap-4 md:flex-row md:justify-between md:items-center">
-                    <button onClick={addPaymentTerm} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-semibold">הוסף שלב תשלום</button>
+                 <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <button onClick={addPaymentTerm} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-semibold w-full md:w-auto">הוסף שלב תשלום</button>
                     <div className={`text-lg md:text-xl font-bold p-3 rounded-md w-full md:w-auto text-center ${isPaymentScheduleValid ? 'text-green-800 bg-green-100' : 'text-red-800 bg-red-100'}`}>
                        <span>סה"כ תשלומים: </span>
                        <span>{totalPaymentPercentage.toFixed(2)}%</span>
                     </div>
                 </div>
-                 {totalPaymentPercentage > 100 && (
+                {totalPaymentPercentage > 100 && (
                     <div role="alert" className="mt-4 p-3 text-center bg-yellow-100 text-yellow-800 border border-yellow-300 rounded-md">
                         <strong>שימו לב:</strong> סך כל אחוזי התשלום עובר את 100%. יש לתקן את הסכומים.
                     </div>
                 )}
+                <div className="overflow-x-auto mt-4">
+                    <table className="w-full text-right border-collapse responsive-table" aria-label="Payment Terms">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="p-3 w-12 text-center">מס'</th>
+                                <th className="p-3 w-40 text-center">הסכום</th>
+                                <th className="p-3 w-40 text-center">חלק התשלום (%)</th>
+                                <th className="p-3">מועד התשלום</th>
+                                <th className="p-3 w-16"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {paymentTerms.map((term, index) => (
+                                <PaymentTermRow key={term.id} item={term} index={index} totalProposalAmount={totalProposalAmount} onUpdate={updatePaymentTerm} onRemove={removePaymentTerm} />
+                            ))}
+                             <tr className="border-t border-gray-200 bg-gray-50 md:border-t-0">
+                                <td data-label="מס'" className="p-3 text-center">{paymentTerms.length + 1}</td>
+                                <td data-label="הסכום" className="p-3 font-semibold text-left md:text-center">{finalPaymentAmount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
+                                <td data-label="חלק התשלום (%)" className="p-3 font-semibold text-left md:text-center">5%</td>
+                                <td data-label="מועד התשלום" className="p-3 font-semibold">בסיום העבודה</td>
+                                <td className="actions-cell"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div className="mt-12 text-center">
