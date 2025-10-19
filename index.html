@@ -28,72 +28,6 @@
             page-break-inside: avoid !important;
         }
       }
-      /* Responsive Table Styles */
-      @media (max-width: 767px) {
-        .responsive-table thead {
-          display: none;
-        }
-        .responsive-table > tbody > tr {
-          position: relative;
-          display: block;
-          margin-bottom: 1.5rem;
-          border: 1px solid #e2e8f0;
-          border-radius: 0.5rem;
-          padding: 1rem;
-          box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-        }
-        .responsive-table td {
-          display: block;
-          padding: 0.75rem 0;
-          text-align: right !important;
-        }
-        /* Add border between card items, but not for the first one (number) or last one (actions) */
-        .responsive-table td:not(:last-child):not([data-label="מס'"]) {
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        /* Label on top of the input/value */
-        .responsive-table td::before {
-          content: attr(data-label);
-          display: block;
-          font-weight: 600;
-          margin-bottom: 0.35rem;
-          font-size: 0.875rem; /* text-sm */
-          color: #475569; /* slate-600 */
-        }
-
-        /* Right-align all inputs */
-        .responsive-table td input,
-        .responsive-table td textarea,
-        .responsive-table td select {
-            width: 100%;
-            text-align: right;
-        }
-        
-        /* Hide labels for cells that don't need one */
-        .responsive-table td[data-label="מס'"]::before,
-        .responsive-table td.actions-cell::before {
-            display: none;
-        }
-
-        /* Style the row number and action button to be less intrusive */
-        .responsive-table td[data-label="מס'"],
-        .responsive-table td.actions-cell {
-            position: absolute;
-            top: 0.75rem;
-            padding: 0;
-            border: none;
-        }
-        .responsive-table td[data-label="מס'"] {
-            right: 1rem;
-            font-weight: bold;
-            font-size: 1.125rem;
-            color: #64748b;
-        }
-        .responsive-table td.actions-cell {
-            left: 0.75rem;
-        }
-      }
     </style>
   <script type="importmap">
 {
@@ -102,7 +36,9 @@
     "react": "https://esm.sh/react@^19.1.1",
     "react-dom/": "https://esm.sh/react-dom@^19.1.1/",
     "react-router-dom": "https://esm.sh/react-router-dom@6",
-    "pako": "https://esm.sh/pako@2.1.0"
+    "pako": "https://esm.sh/pako@2.1.0",
+    "vite": "https://aistudiocdn.com/vite@^7.1.5",
+    "url": "https://aistudiocdn.com/url@^0.11.4"
   }
 }
 </script>
