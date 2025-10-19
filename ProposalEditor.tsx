@@ -125,6 +125,8 @@ const PaymentTermRow = React.memo(({ item, index, totalProposalAmount, onUpdate,
 const WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
 const SHORT_IO_API_KEY = 'sk_ttPvaUqfU5VHropl';
 const SHORT_IO_DOMAIN = 'mganim.short.gy';
+const CORS_PROXY_URL = 'https://corsproxy.io/?';
+const SHORT_IO_API_URL = 'https://api.short.io/links';
 
 const ProposalEditor: React.FC = () => {
     // Using native URLSearchParams on the window.location.search for robust initial state population.
@@ -226,7 +228,7 @@ const ProposalEditor: React.FC = () => {
         let finalLink = longLink;
 
         try {
-            const response = await fetch('https://api.short.io/links', {
+            const response = await fetch(`${CORS_PROXY_URL}${SHORT_IO_API_URL}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': SHORT_IO_API_KEY,
