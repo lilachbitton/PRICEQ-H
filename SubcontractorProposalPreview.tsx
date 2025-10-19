@@ -33,6 +33,7 @@ const SubcontractorProposalPreview: React.FC = () => {
 
         const payload = {
             'שלב': 'הסכם קבלן משנה נחתם',
+            'ID_מסמך': data.documentId,
             'לינק למסמך חתום': finalLink,
             'מזהה_קבלן_CRM': data.subcontractorId,
             'מזהה_פרויקט_CRM': data.projectId,

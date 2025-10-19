@@ -220,7 +220,7 @@ const ProposalEditor: React.FC = () => {
         setIsGenerating(true);
         setCopySuccess('');
 
-        const proposalBaseData = {
+        const currentProposalData = {
             leadId,
             customerName,
             customerAddress,
@@ -230,7 +230,21 @@ const ProposalEditor: React.FC = () => {
             totalProposalAmount,
             finalPaymentAmount,
         };
-        const encoded = encodeData(proposalBaseData);
+
+        let documentIdToUse: string;
+        if (initialData?.documentId) {
+            documentIdToUse = initialData.documentId;
+        } else {
+            const tempEncoded = encodeData(currentProposalData);
+            documentIdToUse = tempEncoded.substring(0, 10);
+        }
+
+        const finalProposalData: Omit<ProposalData, 'documentId'> & { documentId: string } = {
+            ...currentProposalData,
+            documentId: documentIdToUse,
+        };
+
+        const encoded = encodeData(finalProposalData);
         const longLink = `${window.location.origin}${window.location.pathname}#/proposal/${encoded}`;
         const editLink = `${window.location.origin}${window.location.pathname}#/edit/${encoded}`;
         
@@ -260,6 +274,7 @@ const ProposalEditor: React.FC = () => {
 
         const payload = {
             'שלב': 1,
+            'ID_מסמך': documentIdToUse,
             'לינק למילוי הלקוח': finalLink,
             'לינק לעריכת המסמך': editLink,
             'מזהה_לקוח_CRM': leadId,

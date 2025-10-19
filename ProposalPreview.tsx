@@ -46,6 +46,7 @@ const ProposalPreview: React.FC = () => {
         
         const payload = {
             'שלב': 2,
+            'ID_מסמך': proposalData.documentId,
             'לינק למסמך חתום': finalLink,
             'מזהה_לקוח_CRM': proposalData.leadId
         };

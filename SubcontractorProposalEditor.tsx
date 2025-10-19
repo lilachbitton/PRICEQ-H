@@ -110,7 +110,7 @@ const SubcontractorProposalEditor: React.FC = () => {
         setIsGenerating(true);
         setCopySuccess('');
 
-        const data = { 
+        const currentData = { 
             proposalDate, 
             workTitle, 
             projectAddress, 
@@ -124,7 +124,21 @@ const SubcontractorProposalEditor: React.FC = () => {
             subcontractorId,
             projectId,
         };
-        const encoded = encodeData(data);
+        
+        let documentIdToUse: string;
+        if (initialData?.documentId) {
+            documentIdToUse = initialData.documentId;
+        } else {
+            const tempEncoded = encodeData(currentData);
+            documentIdToUse = tempEncoded.substring(0, 10);
+        }
+
+        const finalData: Omit<SubcontractorProposalData, 'documentId'> & { documentId: string } = {
+            ...currentData,
+            documentId: documentIdToUse,
+        };
+
+        const encoded = encodeData(finalData);
         const longLink = `${window.location.origin}${window.location.pathname}#/subcontractor/preview/${encoded}`;
         const editLink = `${window.location.origin}${window.location.pathname}#/subcontractor/edit/${encoded}`;
         
@@ -154,6 +168,7 @@ const SubcontractorProposalEditor: React.FC = () => {
 
         const payload = {
             'שלב': 'יצירת הסכם קבלן משנה',
+            'ID_מסמך': documentIdToUse,
             'לינק לחתימת קבלן משנה': finalLink,
             'לינק לעריכת המסמך': editLink,
             'מזהה_קבלן_CRM': subcontractorId,

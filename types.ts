@@ -1,3 +1,4 @@
+// FIX: Removed self-import of `UnitOfMeasure` which was causing a circular dependency and declaration conflict.
 export enum UnitOfMeasure {
   UNIT = "יח'",
   METER = 'מטר',
@@ -45,6 +46,7 @@ export interface SubcontractorSignatoryDetails {
 
 // FIX: Add shared data structures for proposals.
 export interface ProposalData {
+  documentId: string;
   leadId: string;
   customerName: string;
   customerAddress: string;
@@ -61,6 +63,7 @@ export interface FinalProposalData extends ProposalData {
 }
 
 export interface SubcontractorProposalData {
+    documentId: string;
     proposalDate: string;
     workTitle: string;
     projectAddress: string;
