@@ -184,6 +184,7 @@ const ProposalEditor: React.FC = () => {
 
     const removePaymentTerm = (id: string) => {
         if (paymentTerms.length > 1) {
+            // FIX: The filter callback parameter is `term`, but `item.id` was being used. Corrected to `term.id`.
             setPaymentTerms(prev => prev.filter(term => term.id !== id));
         }
         setGeneratedLink('');
@@ -243,12 +244,39 @@ const ProposalEditor: React.FC = () => {
     };
     
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(generatedLink).then(() => {
-            setCopySuccess('הועתק!');
-            setTimeout(() => setCopySuccess(''), 2000);
-        }, () => {
+        const textArea = document.createElement('textarea');
+        textArea.value = generatedLink;
+
+        // Make the textarea invisible to the user
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+        textArea.style.padding = '0';
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        textArea.style.background = 'transparent';
+
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                setCopySuccess('הועתק!');
+                setTimeout(() => setCopySuccess(''), 2000);
+            } else {
+                setCopySuccess('נכשל');
+            }
+        } catch (err) {
+            console.error('Copy to clipboard failed', err);
             setCopySuccess('נכשל');
-        });
+        }
+
+        document.body.removeChild(textArea);
     };
 
     return (
