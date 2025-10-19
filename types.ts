@@ -24,3 +24,21 @@ export interface ClientDetails {
   lastName: string;
   idNumber: string;
 }
+
+// FIX: Added missing type definitions.
+export interface SubcontractorDetails {
+  name: string;
+  idNumber: string;
+  address: string;
+  managerName: string;
+}
+
+export interface MaterialClause {
+  included: boolean;
+  provider: 'main_contractor' | 'sub_contractor';
+}
+
+export interface SubcontractorSignatoryDetails {
+  fullName: string;
+  idNumber: string;
+}

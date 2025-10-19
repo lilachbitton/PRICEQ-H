@@ -54,7 +54,7 @@ const FinalProposalView: React.FC = () => {
         clientSignature,
     } = finalData;
 
-    const totalWithVat = useMemo(() => totalProposalAmount * 1.17, [totalProposalAmount]);
+    const totalWithVat = useMemo(() => totalProposalAmount * 1.18, [totalProposalAmount]);
 
     return (
         <div className="max-w-4xl mx-auto">
@@ -108,7 +108,7 @@ const FinalProposalView: React.FC = () => {
                                 <span>{totalProposalAmount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</span>
                             </div>
                             <div className="w-full md:w-1/2 flex justify-between p-3 bg-gray-50 print-exact">
-                                <span>סה"כ כולל מע"מ (17%):</span>
+                                <span>סה"כ כולל מע"מ (18%):</span>
                                 <span>{totalWithVat.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</span>
                             </div>
                         </div>
