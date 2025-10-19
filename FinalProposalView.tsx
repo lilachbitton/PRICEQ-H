@@ -162,8 +162,9 @@ const FinalProposalView: React.FC = () => {
                                 )}
                                 <p className="text-center font-bold mt-1">חתימה</p>
                             </div>
-                            <div className="border-t-2 border-dotted border-gray-400 pt-2">
-                                <p className="text-center font-bold">לשירותכם תמיד, חגי תדמור</p>
+                            <div>
+                                <img src="/signature.png" alt="חתימת חגי תדמור" className="h-16 mx-auto"/>
+                                <p className="text-center font-bold mt-1">לשירותכם תמיד, חגי תדמור</p>
                             </div>
                         </div>
                     </div>
