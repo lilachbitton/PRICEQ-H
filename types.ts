@@ -55,6 +55,7 @@ export interface ProposalData {
   paymentTerms: PaymentTerm[];
   totalProposalAmount: number;
   finalPaymentAmount: number;
+  customerType: string;
 }
 
 export interface FinalProposalData extends ProposalData {

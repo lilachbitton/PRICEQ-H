@@ -139,6 +139,7 @@ const ProposalEditor: React.FC = () => {
     const initialSearchParams = useMemo(() => new URLSearchParams(window.location.search), []);
 
     const [leadId, setLeadId] = useState(initialData?.leadId || initialSearchParams.get('leadId') || '');
+    const [customerType, setCustomerType] = useState(initialData?.customerType || initialSearchParams.get('type') || 'ליד');
     const [customerName, setCustomerName] = useState(() => {
         if (initialData) return initialData.customerName;
         const firstName = initialSearchParams.get('firstName') || '';
@@ -229,6 +230,7 @@ const ProposalEditor: React.FC = () => {
             paymentTerms,
             totalProposalAmount,
             finalPaymentAmount,
+            customerType,
         };
 
         let documentIdToUse: string;
@@ -278,6 +280,7 @@ const ProposalEditor: React.FC = () => {
             'לינק למילוי הלקוח': finalLink,
             'לינק לעריכת המסמך': editLink,
             'מזהה_לקוח_CRM': leadId,
+            'סוג לקוח': customerType,
             'סה"כ ההצעה לפני מע"מ': totalProposalAmount
         };
 

@@ -48,7 +48,8 @@ const ProposalPreview: React.FC = () => {
             'שלב': 2,
             'ID_מסמך': proposalData.documentId,
             'לינק למסמך חתום': finalLink,
-            'מזהה_לקוח_CRM': proposalData.leadId
+            'מזהה_לקוח_CRM': proposalData.leadId,
+            'סוג לקוח': proposalData.customerType,
         };
 
         try {
