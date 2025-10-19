@@ -34,6 +34,9 @@ const PaymentTermRow = React.memo(({ item, index, totalAmount, onUpdate, onRemov
 });
 
 const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/cw5410hpw55ef5y6s2alokb32x4dpqoz';
+const SHORT_IO_API_KEY = 'sk_ttPvaUqfU5VHropl';
+const SHORT_IO_DOMAIN = 'mganim.short.gy';
+
 
 const SubcontractorProposalEditor: React.FC = () => {
     const location = useLocation();
@@ -63,6 +66,7 @@ const SubcontractorProposalEditor: React.FC = () => {
     const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>([{ id: crypto.randomUUID(), percentage: 100, milestone: 'בסיום כל העבודה ומסירת שטח נקי ללקוח' }]);
     const [generatedLink, setGeneratedLink] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
+    const [copySuccess, setCopySuccess] = useState('');
 
 
     const handleSubcontractorChange = (field: keyof SubcontractorDetails, value: string) => {
@@ -97,6 +101,7 @@ const SubcontractorProposalEditor: React.FC = () => {
     const handleGenerateLink = async () => {
         if (!isPaymentScheduleValid || totalAmount <= 0) return;
         setIsGenerating(true);
+        setCopySuccess('');
 
         const data = { 
             proposalDate, 
@@ -113,11 +118,35 @@ const SubcontractorProposalEditor: React.FC = () => {
             projectId,       // Include hidden field
         };
         const encoded = encodeData(data);
-        const link = `${window.location.origin}${window.location.pathname}#/subcontractor/preview/${encoded}`;
+        const longLink = `${window.location.origin}${window.location.pathname}#/subcontractor/preview/${encoded}`;
+        
+        let finalLink = longLink;
+
+        try {
+            const response = await fetch('https://api.short.io/links', {
+                method: 'POST',
+                headers: {
+                    'Authorization': SHORT_IO_API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    originalURL: longLink,
+                    domain: SHORT_IO_DOMAIN,
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                finalLink = data.shortURL;
+            } else {
+                 console.error("Failed to shorten URL, using long URL.", await response.text());
+            }
+        } catch (error) {
+            console.error("Error shortening URL, using long URL:", error);
+        }
 
         const payload = {
             'שלב': 'יצירת הסכם קבלן משנה',
-            'לינק לחתימת קבלן משנה': link,
+            'לינק לחתימת קבלן משנה': finalLink,
             'מזהה_קבלן_CRM': subcontractorId,
             'מזהה_פרויקט_CRM': projectId,
             'סה"כ ההסכם לפני מע"מ': totalAmount
@@ -134,8 +163,36 @@ const SubcontractorProposalEditor: React.FC = () => {
             // Non-critical error, so we continue the flow
         }
 
-        setGeneratedLink(link);
+        setGeneratedLink(finalLink);
         setIsGenerating(false);
+    };
+
+    const copyToClipboard = () => {
+        if (!navigator.clipboard) {
+            // Fallback for older browsers
+            try {
+                const textArea = document.createElement("textarea");
+                textArea.value = generatedLink;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                setCopySuccess('הועתק!');
+                setTimeout(() => setCopySuccess(''), 2000);
+            } catch (err) {
+                console.error('Fallback copy failed', err);
+                setCopySuccess('נכשל');
+            }
+            return;
+        }
+        navigator.clipboard.writeText(generatedLink).then(() => {
+            setCopySuccess('הועתק!');
+            setTimeout(() => setCopySuccess(''), 2000);
+        }, (err) => {
+            setCopySuccess('נכשל');
+            console.error('Async copy failed', err);
+        });
     };
 
     return (
@@ -232,7 +289,20 @@ const SubcontractorProposalEditor: React.FC = () => {
             {generatedLink && (
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg text-center border border-green-200">
                      <h3 className="text-lg font-semibold">קישור להסכם מוכן לשליחה</h3>
-                    <div className="flex items-center gap-2 max-w-2xl mx-auto"><input type="text" readOnly value={generatedLink} className="w-full p-2 border rounded-md bg-gray-100" onFocus={(e) => e.target.select()}/><button onClick={() => navigator.clipboard.writeText(generatedLink)} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">העתק</button></div>
+                    <div className="flex items-center gap-2 max-w-2xl mx-auto">
+                        <input 
+                            type="text" 
+                            readOnly value={generatedLink} 
+                            className="w-full p-2 border rounded-md bg-gray-100" 
+                            onFocus={(e) => e.target.select()}
+                        />
+                        <button 
+                            onClick={copyToClipboard} 
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors w-24 shrink-0"
+                        >
+                            {copySuccess || 'העתק'}
+                        </button>
+                    </div>
                 </div>
             )}
         </div>

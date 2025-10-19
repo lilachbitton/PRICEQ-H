@@ -123,6 +123,8 @@ const PaymentTermRow = React.memo(({ item, index, totalProposalAmount, onUpdate,
 });
 
 const WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
+const SHORT_IO_API_KEY = 'sk_ttPvaUqfU5VHropl';
+const SHORT_IO_DOMAIN = 'mganim.short.gy';
 
 const ProposalEditor: React.FC = () => {
     // Using native URLSearchParams on the window.location.search for robust initial state population.
@@ -206,6 +208,7 @@ const ProposalEditor: React.FC = () => {
     const handleGenerateLink = async () => {
         if (!isPaymentScheduleValid || totalProposalAmount <= 0) return;
         setIsGenerating(true);
+        setCopySuccess('');
 
         const proposalBaseData = {
             leadId,
@@ -218,11 +221,35 @@ const ProposalEditor: React.FC = () => {
             finalPaymentAmount,
         };
         const encoded = encodeData(proposalBaseData);
-        const link = `${window.location.origin}${window.location.pathname}#/proposal/${encoded}`;
+        const longLink = `${window.location.origin}${window.location.pathname}#/proposal/${encoded}`;
         
+        let finalLink = longLink;
+
+        try {
+            const response = await fetch('https://api.short.io/links', {
+                method: 'POST',
+                headers: {
+                    'Authorization': SHORT_IO_API_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    originalURL: longLink,
+                    domain: SHORT_IO_DOMAIN,
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                finalLink = data.shortURL;
+            } else {
+                 console.error("Failed to shorten URL, using long URL.", await response.text());
+            }
+        } catch (error) {
+            console.error("Error shortening URL, using long URL:", error);
+        }
+
         const payload = {
             'שלב': 1,
-            'לינק למילוי הלקוח': link,
+            'לינק למילוי הלקוח': finalLink,
             'מזהה_לקוח_CRM': leadId,
             'סה"כ ההצעה לפני מע"מ': totalProposalAmount
         };
@@ -238,8 +265,7 @@ const ProposalEditor: React.FC = () => {
             // Non-critical error, so we continue the flow
         }
 
-        setGeneratedLink(link);
-        setCopySuccess('');
+        setGeneratedLink(finalLink);
         setIsGenerating(false);
     };
     
