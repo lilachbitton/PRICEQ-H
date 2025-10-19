@@ -3,6 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import ProposalEditor from './ProposalEditor';
 import ProposalPreview from './ProposalPreview';
 import FinalProposalView from './FinalProposalView';
+import SubcontractorProposalEditor from './SubcontractorProposalEditor';
+import SubcontractorProposalPreview from './SubcontractorProposalPreview';
+import FinalSubcontractorProposalView from './FinalSubcontractorProposalView';
 import pako from 'pako';
 
 // Helper function to encode data into a URL-safe, compressed string
@@ -47,9 +50,17 @@ export default function App() {
     return (
         <div className="max-w-7xl mx-auto p-3 sm:p-6 lg:p-8 print:p-0 print:max-w-full">
             <Routes>
+                {/* Customer Proposal Routes */}
                 <Route path="/" element={<ProposalEditor />} />
+                <Route path="/edit/:data" element={<ProposalEditor />} />
                 <Route path="/proposal/:data" element={<ProposalPreview />} />
                 <Route path="/final/:data" element={<FinalProposalView />} />
+
+                {/* Subcontractor Agreement Routes */}
+                <Route path="/subcontractor" element={<SubcontractorProposalEditor />} />
+                <Route path="/subcontractor/edit/:data" element={<SubcontractorProposalEditor />} />
+                <Route path="/subcontractor/preview/:data" element={<SubcontractorProposalPreview />} />
+                <Route path="/subcontractor/final/:data" element={<FinalSubcontractorProposalView />} />
             </Routes>
         </div>
     );

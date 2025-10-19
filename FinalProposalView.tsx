@@ -1,22 +1,10 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { WorkItem, PaymentTerm, ClientDetails } from './types';
+// FIX: Import FinalProposalData from types.ts for consistency and remove local definition.
+import { WorkItem, PaymentTerm, ClientDetails, FinalProposalData } from './types';
 import { Watermark } from './SharedComponents';
 import TermsAndConditions from './TermsAndConditions';
 import { decodeData } from './App';
-
-type FinalProposalData = {
-    leadId: string;
-    customerName: string;
-    customerAddress: string;
-    proposalDate: string;
-    workItems: WorkItem[];
-    totalProposalAmount: number;
-    paymentTerms: PaymentTerm[];
-    finalPaymentAmount: number;
-    clientDetails: ClientDetails;
-    clientSignature: string;
-};
 
 const Footer: React.FC = () => (
     <div className="text-center text-xs text-gray-700 border-t-2 border-green-700 pt-3 mt-16">

@@ -1,30 +1,16 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorSignatoryDetails } from './types';
+// FIX: Import FinalSubcontractorProposalData from types.ts for consistency and remove local definition.
+import { WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorSignatoryDetails, FinalSubcontractorProposalData } from './types';
 import { Watermark } from './SharedComponents';
 import SubcontractorTerms from './SubcontractorTerms';
 import { decodeData } from './App';
 
-type FinalProposalData = {
-    proposalDate: string;
-    workTitle: string;
-    projectAddress: string;
-    clientName: string;
-    subcontractor: SubcontractorDetails;
-    workStartDate: string;
-    materials: MaterialClause;
-    workItems: WorkItem[];
-    paymentTerms: PaymentTerm[];
-    totalAmount: number;
-    signatory: SubcontractorSignatoryDetails;
-    subcontractorId: string;
-    projectId: string;
-};
-
 const FinalSubcontractorProposalView: React.FC = () => {
     const { data: encodedData } = useParams<{ data: string }>();
     const navigate = useNavigate();
-    const data = useMemo(() => decodeData<FinalProposalData>(encodedData), [encodedData]);
+    // FIX: Use FinalSubcontractorProposalData type.
+    const data = useMemo(() => decodeData<FinalSubcontractorProposalData>(encodedData), [encodedData]);
 
     if (!data) return <div className="text-center p-10 bg-white shadow-lg rounded-md"><h2 className="text-2xl font-bold text-red-600">שגיאה בנתונים</h2></div>;
 

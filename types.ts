@@ -42,3 +42,39 @@ export interface SubcontractorSignatoryDetails {
   fullName: string;
   idNumber: string;
 }
+
+// FIX: Add shared data structures for proposals.
+export interface ProposalData {
+  leadId: string;
+  customerName: string;
+  customerAddress: string;
+  proposalDate: string;
+  workItems: WorkItem[];
+  paymentTerms: PaymentTerm[];
+  totalProposalAmount: number;
+  finalPaymentAmount: number;
+}
+
+export interface FinalProposalData extends ProposalData {
+    clientDetails: ClientDetails;
+    clientSignature: string;
+}
+
+export interface SubcontractorProposalData {
+    proposalDate: string;
+    workTitle: string;
+    projectAddress: string;
+    clientName: string;
+    subcontractor: SubcontractorDetails;
+    workStartDate: string;
+    materials: MaterialClause;
+    workItems: WorkItem[];
+    paymentTerms: PaymentTerm[];
+    totalAmount: number;
+    subcontractorId: string;
+    projectId: string;
+}
+
+export interface FinalSubcontractorProposalData extends SubcontractorProposalData {
+    signatory: SubcontractorSignatoryDetails;
+}

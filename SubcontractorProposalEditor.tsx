@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { UnitOfMeasure, WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause } from './types';
+import { Link, useLocation, useParams } from 'react-router-dom';
+// FIX: Import SubcontractorProposalData to correctly type the initial data from the URL.
+import { UnitOfMeasure, WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorProposalData } from './types';
 import { HeaderLogo, TrashIcon } from './SharedComponents';
-import { encodeData } from './App';
+import { encodeData, decodeData } from './App';
 
 // Re-usable components copied from ProposalEditor to maintain separation
 const WorkItemRow = React.memo(({ item, index, onUpdate, onRemove }: { item: WorkItem; index: number; onUpdate: (id: string, field: keyof Omit<WorkItem, 'id'>, value: any) => void; onRemove: (id: string) => void; }) => {
@@ -41,31 +42,35 @@ const SHORT_IO_API_URL = 'https://api.short.io/links';
 
 
 const SubcontractorProposalEditor: React.FC = () => {
+    const { data: encodedData } = useParams();
     const location = useLocation();
+    // FIX: Provide a type to decodeData to ensure initialData is correctly typed.
+    const [initialData] = useState(() => decodeData<SubcontractorProposalData>(encodedData));
     const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
     
-    const [proposalDate, setProposalDate] = useState(new Date().toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' }));
-    const [workTitle, setWorkTitle] = useState(params.get('workTitle') || '');
-    const [projectAddress, setProjectAddress] = useState(params.get('projectAddress') || '');
+    const [proposalDate, setProposalDate] = useState(initialData?.proposalDate || new Date().toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' }));
+    const [workTitle, setWorkTitle] = useState(initialData?.workTitle || params.get('workTitle') || '');
+    const [projectAddress, setProjectAddress] = useState(initialData?.projectAddress || params.get('projectAddress') || '');
     const [clientName, setClientName] = useState(() => {
+        if (initialData) return initialData.clientName;
         const firstName = params.get('firstName') || '';
         const lastName = params.get('lastName') || '';
         return [firstName, lastName].filter(Boolean).join(' ').trim();
     });
-    const [subcontractor, setSubcontractor] = useState<SubcontractorDetails>({
+    const [subcontractor, setSubcontractor] = useState<SubcontractorDetails>(initialData?.subcontractor || {
         name: params.get('subName') || '',
         idNumber: params.get('subId') || '',
         address: params.get('subAddress') || '',
         managerName: params.get('subManager') || '',
     });
-    // Hidden fields from URL
-    const [subcontractorId, setSubcontractorId] = useState(params.get('subcontractorId') || '');
-    const [projectId, setProjectId] = useState(params.get('projectId') || '');
+    const [subcontractorId, setSubcontractorId] = useState(initialData?.subcontractorId || params.get('subcontractorId') || '');
+    const [projectId, setProjectId] = useState(initialData?.projectId || params.get('projectId') || '');
 
-    const [workStartDate, setWorkStartDate] = useState('');
-    const [materials, setMaterials] = useState<MaterialClause>({ included: true, provider: 'main_contractor' });
-    const [workItems, setWorkItems] = useState<WorkItem[]>([{ id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }]);
-    const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>([{ id: crypto.randomUUID(), percentage: 100, milestone: 'בסיום כל העבודה ומסירת שטח נקי ללקוח' }]);
+    const [workStartDate, setWorkStartDate] = useState(initialData?.workStartDate || '');
+    const [materials, setMaterials] = useState<MaterialClause>(initialData?.materials || { included: true, provider: 'main_contractor' });
+    const [workItems, setWorkItems] = useState<WorkItem[]>(initialData?.workItems || [{ id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }]);
+    const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>(initialData?.paymentTerms || [{ id: crypto.randomUUID(), percentage: 100, milestone: 'בסיום כל העבודה ומסירת שטח נקי ללקוח' }]);
+    
     const [generatedLink, setGeneratedLink] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [copySuccess, setCopySuccess] = useState('');
@@ -116,11 +121,12 @@ const SubcontractorProposalEditor: React.FC = () => {
             workItems, 
             paymentTerms, 
             totalAmount,
-            subcontractorId, // Include hidden field
-            projectId,       // Include hidden field
+            subcontractorId,
+            projectId,
         };
         const encoded = encodeData(data);
         const longLink = `${window.location.origin}${window.location.pathname}#/subcontractor/preview/${encoded}`;
+        const editLink = `${window.location.origin}${window.location.pathname}#/subcontractor/edit/${encoded}`;
         
         let finalLink = longLink;
 
@@ -149,6 +155,7 @@ const SubcontractorProposalEditor: React.FC = () => {
         const payload = {
             'שלב': 'יצירת הסכם קבלן משנה',
             'לינק לחתימת קבלן משנה': finalLink,
+            'לינק לעריכת המסמך': editLink,
             'מזהה_קבלן_CRM': subcontractorId,
             'מזהה_פרויקט_CRM': projectId,
             'סה"כ ההסכם לפני מע"מ': totalAmount

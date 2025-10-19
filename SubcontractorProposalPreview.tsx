@@ -1,24 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorSignatoryDetails } from './types';
+// FIX: Import SubcontractorProposalData from types.ts for consistency and remove local definition.
+import { WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorSignatoryDetails, SubcontractorProposalData } from './types';
 import { Watermark } from './SharedComponents';
 import SubcontractorTerms from './SubcontractorTerms';
 import { decodeData, encodeData } from './App';
-
-type ProposalData = {
-    proposalDate: string;
-    workTitle: string;
-    projectAddress: string;
-    clientName: string;
-    subcontractor: SubcontractorDetails;
-    workStartDate: string;
-    materials: MaterialClause;
-    workItems: WorkItem[];
-    paymentTerms: PaymentTerm[];
-    totalAmount: number;
-    subcontractorId: string;
-    projectId: string;
-};
 
 const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/cw5410hpw55ef5y6s2alokb32x4dpqoz';
 
@@ -26,7 +12,8 @@ const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/cw5410hpw55ef5y6s2a
 const SubcontractorProposalPreview: React.FC = () => {
     const { data: encodedData } = useParams<{ data: string }>();
     const navigate = useNavigate();
-    const data = useMemo(() => decodeData<ProposalData>(encodedData), [encodedData]);
+    // FIX: Use SubcontractorProposalData type.
+    const data = useMemo(() => decodeData<SubcontractorProposalData>(encodedData), [encodedData]);
 
     const [signatory, setSignatory] = useState<SubcontractorSignatoryDetails>({ fullName: '', idNumber: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -130,7 +117,17 @@ const SubcontractorProposalPreview: React.FC = () => {
 
                 </div>
             </div>
-             <div className="mt-8 flex justify-center print:hidden"><button onClick={handleConfirm} disabled={!isFormValid || isSubmitting} className="bg-green-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-700 disabled:bg-gray-400">{isSubmitting ? 'שולח...' : 'אשר וחתום על ההסכם'}</button></div>
+             <div className="my-8 flex flex-col md:flex-row justify-center items-center gap-4 print:hidden max-w-4xl mx-auto">
+                <button onClick={handleConfirm} disabled={!isFormValid || isSubmitting} className="bg-green-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-700 disabled:bg-gray-400 order-1">
+                    {isSubmitting ? 'שולח...' : 'אשר וחתום על ההסכם'}
+                </button>
+                <button
+                    onClick={() => navigate(`/subcontractor/edit/${encodedData}`)}
+                    className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors order-2"
+                >
+                    חזור לעריכה
+                </button>
+            </div>
         </div>
     );
 };

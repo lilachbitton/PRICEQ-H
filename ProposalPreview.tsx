@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { WorkItem, PaymentTerm, ClientDetails } from './types';
+// FIX: Import ProposalData from types.ts for consistency and remove local definition.
+import { WorkItem, PaymentTerm, ClientDetails, ProposalData } from './types';
 import { Watermark } from './SharedComponents';
 import TermsAndConditions from './TermsAndConditions';
 import { decodeData, encodeData } from './App';
@@ -10,17 +11,6 @@ const Footer: React.FC = () => (
         <img src="/footer.png" alt="Hagay Tadmor contact details" className="w-full" />
     </div>
 );
-
-type ProposalData = {
-    leadId: string;
-    customerName: string;
-    customerAddress: string;
-    proposalDate: string;
-    workItems: WorkItem[];
-    totalProposalAmount: number;
-    paymentTerms: PaymentTerm[];
-    finalPaymentAmount: number;
-};
 
 const WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
 
@@ -252,13 +242,19 @@ const ProposalPreview: React.FC = () => {
                 </div>
             </div>
 
-            <div className="mt-8 flex justify-center items-center print:hidden max-w-4xl mx-auto">
+            <div className="my-8 flex flex-col md:flex-row justify-center items-center gap-4 print:hidden max-w-4xl mx-auto">
                  <button 
                     onClick={handleConfirm} 
                     disabled={!isClientDataValid || isSubmitting}
-                    className="bg-green-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="bg-green-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed order-1"
                 >
                     {isSubmitting ? 'שולח...' : 'שלח מסמך'}
+                </button>
+                <button
+                    onClick={() => navigate(`/edit/${encodedData}`)}
+                    className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors order-2"
+                >
+                    חזור לעריכה
                 </button>
             </div>
         </div>

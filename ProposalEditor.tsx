@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { UnitOfMeasure, WorkItem, PaymentTerm } from './types';
+import { useParams } from 'react-router-dom';
+// FIX: Import ProposalData to correctly type the initial data from the URL.
+import { UnitOfMeasure, WorkItem, PaymentTerm, ProposalData } from './types';
 import { HeaderLogo, TrashIcon } from './SharedComponents';
-import { encodeData } from './App';
+import { encodeData, decodeData } from './App';
 
 interface WorkItemRowProps {
   item: WorkItem;
@@ -129,23 +131,30 @@ const CORS_PROXY_URL = 'https://corsproxy.io/?';
 const SHORT_IO_API_URL = 'https://api.short.io/links';
 
 const ProposalEditor: React.FC = () => {
-    // Using native URLSearchParams on the window.location.search for robust initial state population.
-    const initialSearchParams = new URLSearchParams(window.location.search);
+    const { data: encodedData } = useParams();
     
-    const [leadId, setLeadId] = useState(initialSearchParams.get('leadId') || '');
+    // Using native URLSearchParams for new proposals, and decoded data for editing existing ones.
+    // FIX: Provide a type to decodeData to ensure initialData is correctly typed.
+    const [initialData] = useState(() => decodeData<ProposalData>(encodedData));
+    const initialSearchParams = useMemo(() => new URLSearchParams(window.location.search), []);
+
+    const [leadId, setLeadId] = useState(initialData?.leadId || initialSearchParams.get('leadId') || '');
     const [customerName, setCustomerName] = useState(() => {
+        if (initialData) return initialData.customerName;
         const firstName = initialSearchParams.get('firstName') || '';
         const lastName = initialSearchParams.get('lastName') || '';
         return [firstName, lastName].filter(Boolean).join(' ').trim();
     });
-    const [customerAddress, setCustomerAddress] = useState(initialSearchParams.get('address') || '');
-    const [proposalDate, setProposalDate] = useState(new Date().toLocaleDateString('he-IL'));
-    const [workItems, setWorkItems] = useState<WorkItem[]>([
-        { id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }
-    ]);
-    const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>([
-        { id: crypto.randomUUID(), percentage: 95, milestone: 'עם תחילת העבודה' }
-    ]);
+    const [customerAddress, setCustomerAddress] = useState(initialData?.customerAddress || initialSearchParams.get('address') || '');
+    const [proposalDate, setProposalDate] = useState(initialData?.proposalDate || new Date().toLocaleDateString('he-IL'));
+    
+    const [workItems, setWorkItems] = useState<WorkItem[]>(
+        () => initialData?.workItems || [{ id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }]
+    );
+    const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>(
+        () => initialData?.paymentTerms || [{ id: crypto.randomUUID(), percentage: 95, milestone: 'עם תחילת העבודה' }]
+    );
+    
     const [generatedLink, setGeneratedLink] = useState('');
     const [copySuccess, setCopySuccess] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
@@ -188,7 +197,6 @@ const ProposalEditor: React.FC = () => {
 
     const removePaymentTerm = (id: string) => {
         if (paymentTerms.length > 1) {
-            // FIX: The filter callback parameter is `term`, but `item.id` was being used. Corrected to `term.id`.
             setPaymentTerms(prev => prev.filter(term => term.id !== id));
         }
         setGeneratedLink('');
@@ -224,6 +232,7 @@ const ProposalEditor: React.FC = () => {
         };
         const encoded = encodeData(proposalBaseData);
         const longLink = `${window.location.origin}${window.location.pathname}#/proposal/${encoded}`;
+        const editLink = `${window.location.origin}${window.location.pathname}#/edit/${encoded}`;
         
         let finalLink = longLink;
 
@@ -252,6 +261,7 @@ const ProposalEditor: React.FC = () => {
         const payload = {
             'שלב': 1,
             'לינק למילוי הלקוח': finalLink,
+            'לינק לעריכת המסמך': editLink,
             'מזהה_לקוח_CRM': leadId,
             'סה"כ ההצעה לפני מע"מ': totalProposalAmount
         };
