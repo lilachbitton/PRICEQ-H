@@ -154,8 +154,12 @@ const FinalProposalView: React.FC = () => {
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 items-end">
-                            <div className="border-b-2 border-gray-600 pb-2">
-                                <p className="text-center text-lg font-serif h-8">{clientSignature || ''}</p>
+                            <div className="pb-2">
+                                {clientSignature ? (
+                                    <img src={clientSignature} alt="חתימת לקוח" className="mx-auto h-20 object-contain" />
+                                ) : (
+                                    <div className="h-20 border-b-2 border-gray-600"></div>
+                                )}
                                 <p className="text-center font-bold mt-1">חתימה</p>
                             </div>
                             <div className="border-t-2 border-dotted border-gray-400 pt-2">

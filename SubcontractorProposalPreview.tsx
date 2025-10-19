@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorSignatoryDetails, SubcontractorProposalData } from './types';
 import { Watermark } from './SharedComponents';
 import SubcontractorTerms from './SubcontractorTerms';
+import SignaturePad from './SignaturePad';
 import { decodeData, encodeData } from './App';
 
 const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/cw5410hpw55ef5y6s2alokb32x4dpqoz';
@@ -15,13 +16,13 @@ const SubcontractorProposalPreview: React.FC = () => {
     // FIX: Use SubcontractorProposalData type.
     const data = useMemo(() => decodeData<SubcontractorProposalData>(encodedData), [encodedData]);
 
-    const [signatory, setSignatory] = useState<SubcontractorSignatoryDetails>({ fullName: '', idNumber: '' });
+    const [signatory, setSignatory] = useState<SubcontractorSignatoryDetails>({ fullName: '', idNumber: '', signature: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     if (!data) return <div className="text-center p-10 bg-white shadow-lg rounded-md"><h2 className="text-2xl font-bold text-red-600">שגיאה בנתונים</h2></div>;
 
     const { subcontractor, totalAmount } = data;
-    const isFormValid = signatory.fullName.trim() && signatory.idNumber.trim();
+    const isFormValid = signatory.fullName.trim() && signatory.idNumber.trim() && signatory.signature;
     
     const handleConfirm = async () => {
         if (!isFormValid || !data) return;
@@ -111,7 +112,10 @@ const SubcontractorProposalPreview: React.FC = () => {
                             <div><label className="block text-sm font-medium">ת.ז.</label><input type="text" value={signatory.idNumber} onChange={e => setSignatory(p => ({...p, idNumber: e.target.value}))} className="mt-1 w-full p-2 border-b" required /></div>
                         </div>
                         <div className="grid grid-cols-2 gap-8 mt-10 items-end">
-                            <div><div className="w-full border-b-2 h-10 border-dotted flex items-center justify-center font-serif text-lg">{signatory.fullName}</div><p className="text-center font-bold mt-1">חתימת קבלן המשנה</p></div>
+                            <div>
+                                <SignaturePad onSignatureChange={(sig) => setSignatory(p => ({ ...p, signature: sig }))} />
+                                <p className="text-center font-bold mt-1">חתימת קבלן המשנה</p>
+                            </div>
                             <div><img src="/signature.png" alt="חתימת חגי תדמור" className="h-16 mx-auto"/><p className="text-center font-bold mt-1">חתימת הקבלן הראשי</p></div>
                         </div>
                     </div>

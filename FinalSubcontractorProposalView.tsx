@@ -73,7 +73,14 @@ const FinalSubcontractorProposalView: React.FC = () => {
                             <div><p className="block text-sm font-medium text-gray-500">ת.ז.</p><p className="font-semibold text-lg">{signatory.idNumber}</p></div>
                         </div>
                         <div className="grid grid-cols-2 gap-8 mt-10 items-end">
-                            <div><div className="w-full border-b-2 h-10 border-gray-600 flex items-center justify-center font-serif text-lg">{signatory.fullName}</div><p className="text-center font-bold mt-1">חתימת קבלן המשנה</p></div>
+                            <div>
+                                {signatory.signature ? (
+                                    <img src={signatory.signature} alt="חתימת קבלן המשנה" className="mx-auto h-20 object-contain" />
+                                ) : (
+                                    <div className="h-20 border-b-2 border-gray-600"></div>
+                                )}
+                                <p className="text-center font-bold mt-1">חתימת קבלן המשנה</p>
+                            </div>
                             <div><img src="/signature.png" alt="חתימת חגי תדמור" className="h-16 mx-auto"/><p className="text-center font-bold mt-1">חתימת הקבלן הראשי</p></div>
                         </div>
                     </div>

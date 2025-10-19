@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { WorkItem, PaymentTerm, ClientDetails, ProposalData } from './types';
 import { Watermark } from './SharedComponents';
 import TermsAndConditions from './TermsAndConditions';
+import SignaturePad from './SignaturePad';
 import { decodeData, encodeData } from './App';
 
 const Footer: React.FC = () => (
@@ -222,16 +223,8 @@ const ProposalPreview: React.FC = () => {
                             </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 items-end">
-                            <div>
-                                 <input
-                                    type="text"
-                                    placeholder="הקלד שם מלא לחתימה"
-                                    value={clientSignature}
-                                    onChange={(e) => setClientSignature(e.target.value)}
-                                    className="w-full px-3 py-2 bg-transparent border-b-2 border-dotted border-gray-600 focus:outline-none focus:border-solid focus:border-black text-center text-lg font-serif"
-                                    aria-label="שם הלקוח לחתימה"
-                                    required
-                                />
+                            <div className="w-full">
+                                <SignaturePad onSignatureChange={setClientSignature} />
                                 <p className="text-center font-bold mt-1">חתימה</p>
                             </div>
                             <div className="border-t-2 border-dotted border-gray-400 pt-2">

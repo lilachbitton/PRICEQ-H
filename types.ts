@@ -42,6 +42,7 @@ export interface MaterialClause {
 export interface SubcontractorSignatoryDetails {
   fullName: string;
   idNumber: string;
+  signature: string;
 }
 
 // FIX: Add shared data structures for proposals.
