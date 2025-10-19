@@ -6,9 +6,11 @@ interface SignaturePadProps {
 
 const SignaturePad: React.FC<SignaturePadProps> = ({ onSignatureChange }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [isDrawing, setIsDrawing] = useState(false);
+    // Use a ref for drawing state to prevent re-renders and effect re-runs
+    const isDrawingRef = useRef(false);
     const [hasSigned, setHasSigned] = useState(false);
 
+    // This effect runs only once on mount to set up the canvas and event listeners.
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -16,17 +18,20 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSignatureChange }) => {
         const context = canvas.getContext('2d');
         if (!context) return;
         
-        const resizeCanvas = () => {
+        const setupCanvas = () => {
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width;
             canvas.height = rect.height;
             context.strokeStyle = '#000000';
             context.lineWidth = 2;
             context.lineCap = 'round';
+            // When resizing, clear the signature
+            onSignatureChange('');
+            setHasSigned(false);
         };
         
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        setupCanvas();
+        window.addEventListener('resize', setupCanvas);
 
         const getCoords = (event: MouseEvent | TouchEvent): { x: number, y: number } => {
             const rect = canvas.getBoundingClientRect();
@@ -41,12 +46,12 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSignatureChange }) => {
             const { x, y } = getCoords(event);
             context.beginPath();
             context.moveTo(x, y);
-            setIsDrawing(true);
-            if (!hasSigned) setHasSigned(true);
+            isDrawingRef.current = true;
+            setHasSigned(true);
         };
 
         const draw = (event: MouseEvent | TouchEvent) => {
-            if (!isDrawing) return;
+            if (!isDrawingRef.current) return;
             event.preventDefault();
             const { x, y } = getCoords(event);
             context.lineTo(x, y);
@@ -54,12 +59,13 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSignatureChange }) => {
         };
 
         const stopDrawing = () => {
-            if (!isDrawing) return;
+            if (!isDrawingRef.current) return;
             context.closePath();
-            setIsDrawing(false);
+            isDrawingRef.current = false;
             onSignatureChange(canvas.toDataURL('image/png'));
         };
 
+        // Add event listeners
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
@@ -69,8 +75,9 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSignatureChange }) => {
         canvas.addEventListener('touchmove', draw, { passive: false });
         canvas.addEventListener('touchend', stopDrawing);
 
+        // Cleanup function
         return () => {
-            window.removeEventListener('resize', resizeCanvas);
+            window.removeEventListener('resize', setupCanvas);
             canvas.removeEventListener('mousedown', startDrawing);
             canvas.removeEventListener('mousemove', draw);
             canvas.removeEventListener('mouseup', stopDrawing);
@@ -79,7 +86,7 @@ const SignaturePad: React.FC<SignaturePadProps> = ({ onSignatureChange }) => {
             canvas.removeEventListener('touchmove', draw);
             canvas.removeEventListener('touchend', stopDrawing);
         };
-    }, [isDrawing, onSignatureChange, hasSigned]);
+    }, [onSignatureChange]); // Dependency array is stable, so this runs once.
 
     const clearSignature = () => {
         const canvas = canvasRef.current;
