@@ -7,7 +7,7 @@ import SubcontractorTerms from './SubcontractorTerms';
 import SignaturePad from './SignaturePad';
 import { decodeData, encodeData } from './App';
 
-const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/cw5410hpw55ef5y6s2alokb32x4dpqoz';
+const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
 
 
 const SubcontractorProposalPreview: React.FC = () => {

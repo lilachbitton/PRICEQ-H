@@ -9,14 +9,14 @@ import { encodeData, decodeData } from './App';
 const WorkItemRow = React.memo(({ item, index, onUpdate, onRemove }: { item: WorkItem; index: number; onUpdate: (id: string, field: keyof Omit<WorkItem, 'id'>, value: any) => void; onRemove: (id: string) => void; }) => {
     const total = useMemo(() => item.quantity * item.price, [item.quantity, item.price]);
     return (
-        <tr className="border-t border-gray-200">
-            <td className="p-2 text-center align-top">{index + 1}</td>
-            <td className="p-2 align-top"><textarea value={item.description} onChange={(e) => onUpdate(item.id, 'description', e.target.value)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows={2} /></td>
-            <td className="p-2 w-32 align-top"><select value={item.unit} onChange={(e) => onUpdate(item.id, 'unit', e.target.value)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">{Object.values(UnitOfMeasure).map(unit => <option key={unit} value={unit}>{unit}</option>)}</select></td>
-            <td className="p-2 w-32 align-top"><input type="number" value={item.quantity} onChange={(e) => onUpdate(item.id, 'quantity', parseFloat(e.target.value) || 0)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" min="0" /></td>
-            <td className="p-2 w-32 align-top"><input type="number" value={item.price} onChange={(e) => onUpdate(item.id, 'price', parseFloat(e.target.value) || 0)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" min="0" /></td>
-            <td className="p-2 w-32 align-top font-semibold text-center">{total.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
-            <td className="p-2 w-16 text-center align-top"><button onClick={() => onRemove(item.id)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5"/></button></td>
+        <tr className="border-t border-gray-200 md:border-t-0">
+            <td data-label="מס'" className="p-2 text-center align-top">{index + 1}</td>
+            <td data-label="תיאור העבודה" className="p-2 align-top"><textarea value={item.description} onChange={(e) => onUpdate(item.id, 'description', e.target.value)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" rows={2} /></td>
+            <td data-label="יח' מידה" className="p-2 md:w-32 align-top"><select value={item.unit} onChange={(e) => onUpdate(item.id, 'unit', e.target.value)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">{Object.values(UnitOfMeasure).map(unit => <option key={unit} value={unit}>{unit}</option>)}</select></td>
+            <td data-label="כמות" className="p-2 md:w-32 align-top"><input type="number" value={item.quantity} onChange={(e) => onUpdate(item.id, 'quantity', parseFloat(e.target.value) || 0)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" min="0" /></td>
+            <td data-label="מחיר" className="p-2 md:w-32 align-top"><input type="number" value={item.price} onChange={(e) => onUpdate(item.id, 'price', parseFloat(e.target.value) || 0)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" min="0" /></td>
+            <td data-label='סה"כ' className="p-2 md:w-32 align-top font-semibold text-center">{total.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
+            <td className="p-2 md:w-16 text-center align-top actions-cell"><button onClick={() => onRemove(item.id)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5"/></button></td>
         </tr>
     );
 });
@@ -24,17 +24,17 @@ const WorkItemRow = React.memo(({ item, index, onUpdate, onRemove }: { item: Wor
 const PaymentTermRow = React.memo(({ item, index, totalAmount, onUpdate, onRemove }: { item: PaymentTerm; index: number; totalAmount: number; onUpdate: (id: string, field: keyof Omit<PaymentTerm, 'id'>, value: any) => void; onRemove: (id: string) => void; }) => {
     const amount = useMemo(() => (item.percentage / 100) * totalAmount, [item.percentage, totalAmount]);
     return (
-        <tr className="border-t border-gray-200">
-            <td className="p-2 text-center align-top">{index + 1}</td>
-            <td className="p-2 align-top"><input type="text" value={item.milestone} onChange={(e) => onUpdate(item.id, 'milestone', e.target.value)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" /></td>
-            <td className="p-2 w-40 align-top"><div className="relative"><input type="number" value={item.percentage} onChange={(e) => onUpdate(item.id, 'percentage', parseFloat(e.target.value) || 0)} className="w-full p-2 pr-6 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" min="0" max="100"/><span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">%</span></div></td>
-            <td className="p-2 w-40 align-top font-semibold text-center">{amount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
-            <td className="p-2 w-16 text-center align-top"><button onClick={() => onRemove(item.id)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5"/></button></td>
+        <tr className="border-t border-gray-200 md:border-t-0">
+            <td data-label="מס'" className="p-2 text-center align-top">{index + 1}</td>
+            <td data-label="מועד התשלום" className="p-2 align-top"><input type="text" value={item.milestone} onChange={(e) => onUpdate(item.id, 'milestone', e.target.value)} className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" /></td>
+            <td data-label="אחוז" className="p-2 md:w-40 align-top"><div className="relative"><input type="number" value={item.percentage} onChange={(e) => onUpdate(item.id, 'percentage', parseFloat(e.target.value) || 0)} className="w-full p-2 pr-6 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" min="0" max="100"/><span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">%</span></div></td>
+            <td data-label="סכום" className="p-2 md:w-40 align-top font-semibold text-center">{amount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
+            <td className="p-2 md:w-16 text-center align-top actions-cell"><button onClick={() => onRemove(item.id)} className="text-red-500 hover:text-red-700"><TrashIcon className="h-5 w-5"/></button></td>
         </tr>
     );
 });
 
-const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/cw5410hpw55ef5y6s2alokb32x4dpqoz';
+const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i6y2ygls61qo94';
 const SHORT_IO_API_KEY = 'sk_ttPvaUqfU5VHropl';
 const SHORT_IO_DOMAIN = 'mganim.short.gy';
 const CORS_PROXY_URL = 'https://corsproxy.io/?';
@@ -220,7 +220,7 @@ const SubcontractorProposalEditor: React.FC = () => {
     };
 
     return (
-        <div className="bg-white shadow-xl rounded-lg p-8 my-10" dir="rtl">
+        <div className="bg-white shadow-xl rounded-lg p-4 md:p-8 my-10" dir="rtl">
             <input type="hidden" name="subcontractorId" value={subcontractorId} />
             <input type="hidden" name="projectId" value={projectId} />
              <div className="text-left mb-4">
@@ -232,7 +232,7 @@ const SubcontractorProposalEditor: React.FC = () => {
             <h1 className="text-3xl font-serif text-center text-gray-800 mb-6">הזמנת עבודה והסכם לביצוע עבודות</h1>
 
             {/* Header Details */}
-            <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div><label className="font-bold">תאריך:</label><input type="text" value={proposalDate} onChange={e => setProposalDate(e.target.value)} className="w-full p-1 border-b" /></div>
                 <div><label className="font-bold">בכתובת (פרויקט):</label><input type="text" value={projectAddress} onChange={e => {setProjectAddress(e.target.value); setGeneratedLink('');}} className="w-full p-1 border-b" placeholder="הכתובת בה תתבצע העבודה"/></div>
             </div>
@@ -278,26 +278,26 @@ const SubcontractorProposalEditor: React.FC = () => {
 
             {/* Work Items Table */}
             <div className="mb-10">
-                <table className="w-full text-right border-collapse">
-                    <thead className="bg-gray-100"><tr><th className="p-3 w-12">מס'</th><th className="p-3">תיאור העבודה</th><th className="p-3 w-32">יח' מידה</th><th className="p-3 w-32">כמות</th><th className="p-3 w-32">מחיר</th><th className="p-3 w-32">סה"כ</th><th className="p-3 w-16"></th></tr></thead>
+                <table className="w-full text-right border-collapse responsive-table">
+                    <thead className="bg-gray-100"><tr><th className="p-3 w-12">מס'</th><th className="p-3">תיאור העבודה</th><th className="p-3 md:w-32">יח' מידה</th><th className="p-3 md:w-32">כמות</th><th className="p-3 md:w-32">מחיר</th><th className="p-3 md:w-32">סה"כ</th><th className="p-3 md:w-16"></th></tr></thead>
                     <tbody>{workItems.map((item, index) => <WorkItemRow key={item.id} item={item} index={index} onUpdate={updateWorkItem} onRemove={removeWorkItem} />)}</tbody>
                 </table>
-                <div className="mt-4 flex justify-between items-center">
-                    <button onClick={addWorkItem} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">הוסף שורה</button>
-                    <div className="text-xl font-bold bg-gray-100 p-3 rounded-md">סה"כ לעבודה זו: {totalAmount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</div>
+                <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <button onClick={addWorkItem} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full md:w-auto">הוסף שורה</button>
+                    <div className="text-xl font-bold bg-gray-100 p-3 rounded-md text-center w-full md:w-auto">סה"כ לעבודה זו: {totalAmount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</div>
                 </div>
             </div>
 
             {/* Payment Terms Table */}
             <div className="mb-10">
                 <h3 className="text-2xl font-serif mb-4">תשלומים לפרויקט</h3>
-                <table className="w-full text-right border-collapse">
-                    <thead className="bg-gray-100"><tr><th className="p-3 w-12">מס'</th><th className="p-3">מועד התשלום</th><th className="p-3 w-40">אחוז</th><th className="p-3 w-40">סכום</th><th className="p-3 w-16"></th></tr></thead>
+                <table className="w-full text-right border-collapse responsive-table">
+                    <thead className="bg-gray-100"><tr><th className="p-3 w-12">מס'</th><th className="p-3">מועד התשלום</th><th className="p-3 md:w-40">אחוז</th><th className="p-3 md:w-40">סכום</th><th className="p-3 md:w-16"></th></tr></thead>
                     <tbody>{paymentTerms.map((term, index) => <PaymentTermRow key={term.id} item={term} index={index} totalAmount={totalAmount} onUpdate={updatePaymentTerm} onRemove={removePaymentTerm} />)}</tbody>
                 </table>
-                <div className="mt-4 flex justify-between items-center">
-                    <button onClick={addPaymentTerm} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">הוסף שלב</button>
-                    <div className={`text-xl font-bold p-3 rounded-md ${isPaymentScheduleValid ? 'text-green-800 bg-green-100' : 'text-red-800 bg-red-100'}`}>סה"כ: {totalPaymentPercentage.toFixed(2)}%</div>
+                <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <button onClick={addPaymentTerm} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full md:w-auto">הוסף שלב</button>
+                    <div className={`text-xl font-bold p-3 rounded-md ${isPaymentScheduleValid ? 'text-green-800 bg-green-100' : 'text-red-800 bg-red-100'} w-full md:w-auto text-center`}>סה"כ: {totalPaymentPercentage.toFixed(2)}%</div>
                 </div>
             </div>
 
@@ -305,7 +305,7 @@ const SubcontractorProposalEditor: React.FC = () => {
                 <button 
                     onClick={handleGenerateLink} 
                     disabled={!isPaymentScheduleValid || totalAmount <= 0 || !!generatedLink || isGenerating} 
-                    className="bg-green-600 text-white px-10 py-3 rounded-lg text-xl font-bold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="bg-green-600 text-white px-6 md:px-10 py-3 rounded-lg text-lg md:text-xl font-bold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed w-full md:w-auto"
                 >
                     {isGenerating ? 'יוצר קישור...' : (isPaymentScheduleValid ? 'צור קישור להסכם' : 'יש להתאים את התשלומים ל-100%')}
                 </button>
@@ -313,7 +313,7 @@ const SubcontractorProposalEditor: React.FC = () => {
             {generatedLink && (
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg text-center border border-green-200">
                      <h3 className="text-lg font-semibold">קישור להסכם מוכן לשליחה</h3>
-                    <div className="flex items-center gap-2 max-w-2xl mx-auto">
+                    <div className="flex flex-col md:flex-row items-center gap-2 max-w-2xl mx-auto">
                         <input 
                             type="text" 
                             readOnly value={generatedLink} 
@@ -322,7 +322,7 @@ const SubcontractorProposalEditor: React.FC = () => {
                         />
                         <button 
                             onClick={copyToClipboard} 
-                            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors w-24 shrink-0"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors w-full md:w-24 mt-2 md:mt-0 shrink-0"
                         >
                             {copySuccess || 'העתק'}
                         </button>
