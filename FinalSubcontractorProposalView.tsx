@@ -41,10 +41,17 @@ const FinalSubcontractorProposalView: React.FC = () => {
                     <p>כל החומרים לעבודה <strong className="font-semibold">{data.materials.included ? 'כלולים' : 'אינם כלולים'}</strong> במחיר העבודה ויסופקו ע"י <strong className="font-semibold">{data.materials.provider === 'main_contractor' ? 'הקבלן הראשי' : 'קבלן המשנה'}</strong>.</p>
                     
                     <div className="my-8 page-break-avoid">
-                        <table className="w-full text-right border-collapse">
+                        <table className="w-full text-right border-collapse responsive-table preview-table">
                             <thead className="bg-gray-100"><tr><th className="p-2 border">מס'</th><th className="p-2 border">תיאור העבודה</th><th className="p-2 border">יח' מידה</th><th className="p-2 border">כמות</th><th className="p-2 border">מחיר</th><th className="p-2 border">סה"כ</th></tr></thead>
                             <tbody>
-                                {data.workItems.map((item, i) => <tr key={i}><td className="p-2 border text-center">{i+1}</td><td className="p-2 border whitespace-pre-wrap">{item.description}</td><td className="p-2 border text-center">{item.unit}</td><td className="p-2 border text-center">{item.quantity}</td><td className="p-2 border text-center">{(item.price).toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</td><td className="p-2 border text-center font-semibold">{(item.price*item.quantity).toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</td></tr>)}
+                                {data.workItems.map((item, i) => <tr key={i}>
+                                    <td data-label="מס'" className="p-2 border text-center">{i+1}</td>
+                                    <td data-label="תיאור העבודה" className="p-2 border whitespace-pre-wrap">{item.description}</td>
+                                    <td data-label="יח' מידה" className="p-2 border text-center"><span className="td-value">{item.unit}</span></td>
+                                    <td data-label="כמות" className="p-2 border text-center"><span className="td-value">{item.quantity}</span></td>
+                                    <td data-label="מחיר" className="p-2 border text-center"><span className="td-value">{(item.price).toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</span></td>
+                                    <td data-label='סה"כ' className="p-2 border text-center font-semibold"><span className="td-value">{(item.price*item.quantity).toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</span></td>
+                                </tr>)}
                             </tbody>
                             <tfoot><tr className="bg-gray-100 font-bold"><td colSpan={5} className="p-2 border text-left">סה"כ לעבודה זו</td><td className="p-2 border text-center">{totalAmount.toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</td></tr></tfoot>
                         </table>
@@ -54,10 +61,14 @@ const FinalSubcontractorProposalView: React.FC = () => {
                     
                      <div className="my-8 page-break-avoid">
                         <h3 className="text-xl font-serif font-bold text-center mb-4">תשלומים לפרויקט</h3>
-                        <table className="w-full text-right border-collapse">
+                        <table className="w-full text-right border-collapse responsive-table preview-table">
                             <thead className="bg-gray-100"><tr><th className="p-2 border">מס'</th><th className="p-2 border">מועד התשלום</th><th className="p-2 border">סכום התשלום לפני מע"מ</th></tr></thead>
                             <tbody>
-                                {data.paymentTerms.map((term, i) => <tr key={i}><td className="p-2 border text-center">{i+1}</td><td className="p-2 border">{term.milestone}</td><td className="p-2 border text-center">{((term.percentage / 100) * totalAmount).toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</td></tr>)}
+                                {data.paymentTerms.map((term, i) => <tr key={i}>
+                                    <td data-label="מס'" className="p-2 border text-center">{i+1}</td>
+                                    <td data-label="מועד התשלום" className="p-2 border"><span className="td-value">{term.milestone}</span></td>
+                                    <td data-label="הסכום" className="p-2 border text-center"><span className="td-value">{((term.percentage / 100) * totalAmount).toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</span></td>
+                                </tr>)}
                             </tbody>
                         </table>
                         <p className="text-sm mt-2">כל תשלום יתבצע בהעברה לאחר קבלת חשבונית תקינה, ובתוך שבוע ימים.</p>

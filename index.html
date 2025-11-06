@@ -30,6 +30,7 @@
       }
       /* Responsive Table Styles */
       @media (max-width: 767px) {
+        /* == EDITOR TABLES == */
         .responsive-table thead {
           display: none;
         }
@@ -39,7 +40,7 @@
           margin-bottom: 1.5rem;
           border: 1px solid #e2e8f0;
           border-radius: 0.5rem;
-          padding: 1rem;
+          padding: 1.5rem 1rem 1rem 1rem;
           box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
         }
         .responsive-table td {
@@ -47,36 +48,31 @@
           padding: 0.75rem 0;
           text-align: right !important;
         }
-        /* Add border between card items, but not for the first one (number) or last one (actions) */
         .responsive-table td:not(:last-child):not([data-label="מס'"]) {
             border-bottom: 1px solid #f1f5f9;
         }
-
-        /* Label on top of the input/value */
+        .responsive-table td:last-of-type {
+            border-bottom: none;
+        }
         .responsive-table td::before {
           content: attr(data-label);
           display: block;
           font-weight: 600;
-          margin-bottom: 0.35rem;
-          font-size: 0.875rem; /* text-sm */
-          color: #475569; /* slate-600 */
+          margin-bottom: 0.5rem;
+          font-size: 0.875rem;
+          color: #475569;
         }
-
-        /* Right-align all inputs */
         .responsive-table td input,
         .responsive-table td textarea,
         .responsive-table td select {
             width: 100%;
             text-align: right;
+            font-size: 1rem;
         }
-        
-        /* Hide labels for cells that don't need one */
         .responsive-table td[data-label="מס'"]::before,
         .responsive-table td.actions-cell::before {
             display: none;
         }
-
-        /* Style the row number and action button to be less intrusive */
         .responsive-table td[data-label="מס'"],
         .responsive-table td.actions-cell {
             position: absolute;
@@ -92,6 +88,67 @@
         }
         .responsive-table td.actions-cell {
             left: 0.75rem;
+        }
+
+        /* == PREVIEW TABLES (overrides editor styles) == */
+        .preview-table > tbody > tr {
+            display: block;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+            margin: 0;
+            position: static;
+            border-radius: 0;
+            box-shadow: none;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+        }
+        .preview-table > tbody > tr:last-child {
+            border-bottom: none;
+        }
+        .preview-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.3rem 0;
+            border-bottom: none;
+        }
+        .preview-table td::before {
+            content: attr(data-label);
+            color: #6b7280;
+            margin-bottom: 0;
+        }
+        .preview-table .td-value {
+            font-weight: 500;
+            text-align: left;
+        }
+        .preview-table td[data-label="מס'"] {
+            display: none;
+        }
+        .preview-table td[data-label^="פירוט"],
+        .preview-table td[data-label^="תיאור"],
+        .preview-table td[data-label^="מועד התשלום"] {
+            display: block;
+            padding-bottom: 0.5rem;
+        }
+        .preview-table td[data-label^="פירוט"]::before,
+        .preview-table td[data-label^="תיאור"]::before,
+        .preview-table td[data-label^="מועד התשלום"]::before {
+            display: none;
+        }
+        .preview-table td[data-label^="פירוט"],
+        .preview-table td[data-label^="תיאור"] {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1f2937;
+        }
+        .preview-table td[data-label^='סה"כ'],
+        .preview-table td[data-label^='הסכום'] {
+            font-weight: bold;
+            color: #1f2937;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed #d1d5db;
         }
       }
     </style>

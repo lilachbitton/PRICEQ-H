@@ -66,7 +66,7 @@ const FinalProposalView: React.FC = () => {
 
                     {/* Work Items Table */}
                     <div className="mb-10 page-break-avoid">
-                        <table className="w-full text-right border-collapse responsive-table" aria-label="Work Items Preview">
+                        <table className="w-full text-right border-collapse responsive-table preview-table" aria-label="Work Items Preview">
                             <thead className="bg-gray-100 print-exact">
                                 <tr>
                                     <th className="p-3 w-12 text-center">מס'</th>
@@ -82,10 +82,10 @@ const FinalProposalView: React.FC = () => {
                                     <tr key={item.id} className="border-t border-gray-200 md:border-t-0">
                                         <td data-label="מס'" className="p-2 text-center align-top">{index + 1}</td>
                                         <td data-label="פירוט העבודה" className="p-2 align-top whitespace-pre-wrap">{item.description}</td>
-                                        <td data-label="יח' מידה" className="p-2 text-left md:text-center align-top">{item.unit}</td>
-                                        <td data-label="כמות" className="p-2 text-left md:text-center align-top">{item.quantity}</td>
-                                        <td data-label="מחיר יח'" className="p-2 text-left md:text-center align-top">{(item.price).toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
-                                        <td data-label='סה"כ' className="p-2 text-left md:text-center align-top font-semibold">{(item.quantity * item.price).toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
+                                        <td data-label="יח' מידה" className="p-2 md:text-center align-top"><span className="td-value">{item.unit}</span></td>
+                                        <td data-label="כמות" className="p-2 md:text-center align-top"><span className="td-value">{item.quantity}</span></td>
+                                        <td data-label="מחיר יח'" className="p-2 md:text-center align-top"><span className="td-value">{(item.price).toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</span></td>
+                                        <td data-label='סה"כ' className="p-2 md:text-center align-top font-semibold"><span className="td-value">{(item.quantity * item.price).toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</span></td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -106,7 +106,7 @@ const FinalProposalView: React.FC = () => {
                     <div className="mb-10 page-break-avoid">
                         <h3 className="text-2xl font-serif text-gray-800 mb-4">תנאי תשלום</h3>
                         <p className="mb-4">לפי התקדמות העבודה כמפורט בטבלה, או עד 5 תשלומים בכרטיס אשראי. יש להוסיף מע"מ לכל תשלום.</p>
-                        <table className="w-full text-right border-collapse responsive-table" aria-label="Payment Terms Preview">
+                        <table className="w-full text-right border-collapse responsive-table preview-table" aria-label="Payment Terms Preview">
                             <thead className="bg-gray-100 print-exact">
                                 <tr>
                                     <th className="p-3 w-12 text-center">מס'</th>
@@ -119,16 +119,16 @@ const FinalProposalView: React.FC = () => {
                                 {paymentTerms.map((term, index) => (
                                     <tr key={term.id} className="border-t border-gray-200 md:border-t-0">
                                         <td data-label="מס'" className="p-2 text-center">{index + 1}</td>
-                                        <td data-label="הסכום" className="p-2 text-left md:text-right">{((term.percentage / 100) * totalProposalAmount).toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
-                                        <td data-label="חלק התשלום" className="p-2 text-left md:text-center">{term.percentage}%</td>
-                                        <td data-label="מועד התשלום" className="p-2 text-left md:text-right">{term.milestone}</td>
+                                        <td data-label="הסכום" className="p-2 md:text-right"><span className="td-value">{((term.percentage / 100) * totalProposalAmount).toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</span></td>
+                                        <td data-label="חלק התשלום" className="p-2 md:text-center"><span className="td-value">{term.percentage}%</span></td>
+                                        <td data-label="מועד התשלום" className="p-2 md:text-right"><span className="td-value">{term.milestone}</span></td>
                                     </tr>
                                 ))}
                                 <tr className="border-t border-gray-200 bg-gray-50 print-exact md:border-t-0">
                                     <td data-label="מס'" className="p-3 text-center">{paymentTerms.length + 1}</td>
-                                    <td data-label="הסכום" className="p-3 font-semibold text-left md:text-right">{finalPaymentAmount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</td>
-                                    <td data-label="חלק התשלום" className="p-3 font-semibold text-left md:text-center">5%</td>
-                                    <td data-label="מועד התשלום" className="p-3 font-semibold text-left md:text-right">בסיום העבודה</td>
+                                    <td data-label="הסכום" className="p-3 font-semibold md:text-right"><span className="td-value">{finalPaymentAmount.toLocaleString('he-IL', { style: 'currency', currency: 'ILS' })}</span></td>
+                                    <td data-label="חלק התשלום" className="p-3 font-semibold md:text-center"><span className="td-value">5%</span></td>
+                                    <td data-label="מועד התשלום" className="p-3 font-semibold md:text-right"><span className="td-value">בסיום העבודה</span></td>
                                 </tr>
                             </tbody>
                         </table>
