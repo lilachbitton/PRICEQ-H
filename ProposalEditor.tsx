@@ -153,7 +153,7 @@ const ProposalEditor: React.FC = () => {
         () => initialData?.workItems || [{ id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }]
     );
     const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>(
-        () => initialData?.paymentTerms || [{ id: crypto.randomUUID(), percentage: 95, milestone: 'עם תחילת העבודה' }]
+        () => initialData?.paymentTerms || [{ id: crypto.randomUUID(), percentage: 95, milestone: 'בהזמנת העבודה' }]
     );
     
     const [generatedLink, setGeneratedLink] = useState('');
