@@ -117,6 +117,12 @@ const SubcontractorProposalPreview: React.FC = () => {
                                         <td data-label="הסכום" className="p-2 border text-center"><span className="td-value">{((term.percentage / 100) * totalAmount).toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</span></td>
                                     </tr>)}
                                 </tbody>
+                                <tfoot>
+                                    <tr className="bg-gray-100 font-bold">
+                                        <td colSpan={2} className="p-2 border text-left">סה"כ תשלומים לפרויקט</td>
+                                        <td className="p-2 border text-center">{totalAmount.toLocaleString('he-IL',{style:'currency',currency:'ILS'})}</td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                         <p className="text-sm mt-2">כל תשלום יתבצע בהעברה לאחר קבלת חשבונית תקינה, ובתוך שבוע ימים.</p>
