@@ -46,9 +46,28 @@ export const decodeData = <T extends {}>(encoded: string | undefined): T | null 
     }
 };
 
+const CloseButton: React.FC = () => {
+    const handleClose = () => {
+        // This will attempt to close the current tab/window.
+        // It's most effective for windows opened via window.open().
+        window.close();
+    };
+
+    return (
+        <button
+            onClick={handleClose}
+            className="fixed top-4 left-4 z-50 bg-gray-600 text-white px-3 py-1 rounded-full text-sm shadow-lg hover:bg-gray-700 transition-colors print:hidden"
+            aria-label="סגירה"
+        >
+            סגירה
+        </button>
+    );
+};
+
 export default function App() {
     return (
         <div className="max-w-7xl mx-auto p-3 sm:p-6 lg:p-8 print:p-0 print:max-w-full">
+            <CloseButton />
             <Routes>
                 {/* Customer Proposal Routes */}
                 <Route path="/" element={<ProposalEditor />} />
