@@ -47,19 +47,19 @@ export const decodeData = <T extends {}>(encoded: string | undefined): T | null 
 };
 
 const CloseButton: React.FC = () => {
-    const handleClose = () => {
-        // This will attempt to close the current tab/window.
-        // It's most effective for windows opened via window.open().
-        window.close();
+    const handleBack = () => {
+        // Use window.history.back() for a more reliable way to return to the previous page (CRM).
+        // window.close() has security restrictions and often fails in modern browsers.
+        window.history.back();
     };
 
     return (
         <button
-            onClick={handleClose}
-            className="fixed top-4 left-4 z-50 bg-gray-600 text-white px-3 py-1 rounded-full text-sm shadow-lg hover:bg-gray-700 transition-colors print:hidden"
-            aria-label="סגירה"
+            onClick={handleBack}
+            className="fixed top-4 left-4 z-50 bg-gray-600 text-white px-4 py-2 rounded-full text-sm shadow-lg hover:bg-gray-700 transition-colors print:hidden"
+            aria-label="חזרה ל-CRM"
         >
-            סגירה
+            חזרה ל-CRM
         </button>
     );
 };
