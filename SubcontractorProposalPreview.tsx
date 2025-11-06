@@ -135,7 +135,21 @@ const SubcontractorProposalPreview: React.FC = () => {
                         <h3 className="font-bold text-lg mb-4">אישור וחתימה</h3>
                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div><label className="block text-sm font-medium">שם מלא (חותם)</label><input type="text" value={signatory.fullName} onChange={e => setSignatory(p => ({...p, fullName: e.target.value}))} className="mt-1 w-full p-2 border-b" required /></div>
-                            <div><label className="block text-sm font-medium">ת.ז.</label><input type="text" value={signatory.idNumber} onChange={e => setSignatory(p => ({...p, idNumber: e.target.value}))} className="mt-1 w-full p-2 border-b" required /></div>
+                            <div>
+                                <label className="block text-sm font-medium">ת.ז.</label>
+                                <input 
+                                    type="text" 
+                                    value={signatory.idNumber} 
+                                    onChange={e => {
+                                        const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                        setSignatory(p => ({...p, idNumber: numericValue}));
+                                    }} 
+                                    className="mt-1 w-full p-2 border-b" 
+                                    required
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
+                                />
+                            </div>
                         </div>
                         <div className="grid grid-cols-2 gap-8 mt-10 items-end">
                             <div>
