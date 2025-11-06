@@ -91,13 +91,24 @@ const SubcontractorProposalEditor: React.FC = () => {
         setGeneratedLink('');
     };
 
-    const addPaymentTerm = () => setPaymentTerms(prev => [...prev, { id: crypto.randomUUID(), percentage: 0, milestone: '' }]);
+    const addPaymentTerm = () => {
+        setPaymentTerms(prev => {
+            const newTerm = { id: crypto.randomUUID(), percentage: 0, milestone: '' };
+            if (prev.length === 0) {
+                return [newTerm];
+            }
+            const allButLast = prev.slice(0, -1);
+            const lastTerm = prev[prev.length - 1];
+            return [...allButLast, newTerm, lastTerm];
+        });
+        setGeneratedLink('');
+    };
     const updatePaymentTerm = (id: string, field: keyof Omit<PaymentTerm, 'id'>, value: any) => {
         setPaymentTerms(prev => prev.map(term => term.id === id ? { ...term, [field]: value } : term));
         setGeneratedLink('');
     };
     const removePaymentTerm = (id: string) => {
-        if (paymentTerms.length > 1) setPaymentTerms(prev => prev.filter(term => term.id !== id));
+        if (paymentTerms.length > 1) setPaymentTerms(prev => prev.filter(item => item.id !== id));
         setGeneratedLink('');
     };
 

@@ -220,9 +220,14 @@ const ProposalPreview: React.FC = () => {
                                     type="text"
                                     id="clientIdNumber"
                                     value={clientDetails.idNumber}
-                                    onChange={(e) => onClientDetailsChange('idNumber', e.target.value)}
+                                    onChange={(e) => {
+                                        const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                        onClientDetailsChange('idNumber', numericValue);
+                                    }}
                                     className="mt-1 block w-full px-3 py-2 bg-white border-b border-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                     required
+                                    inputMode="numeric"
+                                    pattern="[0-9]*"
                                 />
                             </div>
                         </div>
