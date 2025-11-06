@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 // FIX: Import SubcontractorProposalData from types.ts for consistency and remove local definition.
 import { WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorSignatoryDetails, SubcontractorProposalData } from './types';
@@ -18,6 +18,11 @@ const SubcontractorProposalPreview: React.FC = () => {
 
     const [signatory, setSignatory] = useState<SubcontractorSignatoryDetails>({ fullName: '', idNumber: '', signature: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // FIX: Wrapped the signature handler in useCallback to prevent re-renders from breaking the signature pad.
+    const handleSignatureChange = useCallback((signature: string) => {
+        setSignatory(prev => ({ ...prev, signature }));
+    }, []);
 
     if (!data) return <div className="text-center p-10 bg-white shadow-lg rounded-md"><h2 className="text-2xl font-bold text-red-600">שגיאה בנתונים</h2></div>;
 
@@ -128,7 +133,7 @@ const SubcontractorProposalPreview: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-8 mt-10 items-end">
                             <div>
-                                <SignaturePad onSignatureChange={(sig) => setSignatory(p => ({ ...p, signature: sig }))} />
+                                <SignaturePad onSignatureChange={handleSignatureChange} />
                                 <p className="text-center font-bold mt-1">חתימת קבלן המשנה</p>
                             </div>
                             <div><img src="/signature.png" alt="חתימת חגי תדמור" className="h-16 mx-auto"/><p className="text-center font-bold mt-1">חתימת הקבלן הראשי</p></div>
