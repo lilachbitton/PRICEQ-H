@@ -89,67 +89,6 @@
         .responsive-table td.actions-cell {
             left: 0.75rem;
         }
-
-        /* == PREVIEW TABLES (overrides editor styles) == */
-        .preview-table > tbody > tr {
-            display: block;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 1rem 0;
-            margin: 0;
-            position: static;
-            border-radius: 0;
-            box-shadow: none;
-            border-left: none;
-            border-right: none;
-            border-top: none;
-        }
-        .preview-table > tbody > tr:last-child {
-            border-bottom: none;
-        }
-        .preview-table td {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.3rem 0;
-            border-bottom: none;
-        }
-        .preview-table td::before {
-            content: attr(data-label);
-            color: #6b7280;
-            margin-bottom: 0;
-        }
-        .preview-table .td-value {
-            font-weight: 500;
-            text-align: left;
-        }
-        .preview-table td[data-label="מס'"] {
-            display: none;
-        }
-        .preview-table td[data-label^="פירוט"],
-        .preview-table td[data-label^="תיאור"],
-        .preview-table td[data-label^="מועד התשלום"] {
-            display: block;
-            padding-bottom: 0.5rem;
-        }
-        .preview-table td[data-label^="פירוט"]::before,
-        .preview-table td[data-label^="תיאור"]::before,
-        .preview-table td[data-label^="מועד התשלום"]::before {
-            display: none;
-        }
-        .preview-table td[data-label^="פירוט"],
-        .preview-table td[data-label^="תיאור"] {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #1f2937;
-        }
-        .preview-table td[data-label^='סה"כ'],
-        .preview-table td[data-label^='הסכום'] {
-            font-weight: bold;
-            color: #1f2937;
-            margin-top: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px dashed #d1d5db;
-        }
       }
     </style>
   <script type="importmap">
