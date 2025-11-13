@@ -70,6 +70,7 @@ const SubcontractorProposalEditor: React.FC = () => {
     const [materials, setMaterials] = useState<MaterialClause>(initialData?.materials || { included: true, provider: 'main_contractor' });
     const [workItems, setWorkItems] = useState<WorkItem[]>(initialData?.workItems || [{ id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }]);
     const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>(initialData?.paymentTerms || [{ id: crypto.randomUUID(), percentage: 100, milestone: 'בסיום כל העבודה ומסירת שטח נקי ללקוח' }]);
+    const [notes, setNotes] = useState(initialData?.notes || '');
     
     const [generatedLink, setGeneratedLink] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
@@ -134,6 +135,7 @@ const SubcontractorProposalEditor: React.FC = () => {
             totalAmount,
             subcontractorId,
             projectId,
+            notes,
         };
         
         let documentIdToUse: string;
@@ -291,6 +293,7 @@ const SubcontractorProposalEditor: React.FC = () => {
             <div className="mb-10">
                 <table className="w-full text-right border-collapse responsive-table">
                     <thead className="bg-gray-100"><tr><th className="p-3 w-12">מס'</th><th className="p-3">תיאור העבודה</th><th className="p-3 md:w-32">יח' מידה</th><th className="p-3 md:w-32">כמות</th><th className="p-3 md:w-32">מחיר</th><th className="p-3 md:w-32">סה"כ</th><th className="p-3 md:w-16"></th></tr></thead>
+                    {/* FIX: Corrected typo from `removeItem` to `removeWorkItem`. */}
                     <tbody>{workItems.map((item, index) => <WorkItemRow key={item.id} item={item} index={index} onUpdate={updateWorkItem} onRemove={removeWorkItem} />)}</tbody>
                 </table>
                 <div className="mt-4 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -310,6 +313,17 @@ const SubcontractorProposalEditor: React.FC = () => {
                     <button onClick={addPaymentTerm} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 w-full md:w-auto">הוסף שלב</button>
                     <div className={`text-xl font-bold p-3 rounded-md ${isPaymentScheduleValid ? 'text-green-800 bg-green-100' : 'text-red-800 bg-red-100'} w-full md:w-auto text-center`}>סה"כ: {totalPaymentPercentage.toFixed(2)}%</div>
                 </div>
+            </div>
+
+            <div className="mb-10">
+                <h3 className="text-2xl font-serif mb-4">הערות להסכם</h3>
+                <textarea
+                    value={notes}
+                    onChange={(e) => { setNotes(e.target.value); setGeneratedLink(''); }}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition"
+                    rows={4}
+                    placeholder="הזן הערות נוספות להסכם..."
+                />
             </div>
 
             <div className="mt-12 text-center">

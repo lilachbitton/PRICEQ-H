@@ -84,6 +84,15 @@ const FinalSubcontractorProposalView: React.FC = () => {
                         <p className="text-sm mt-2">כל תשלום יתבצע בהעברה לאחר קבלת חשבונית תקינה, ובתוך שבוע ימים.</p>
                     </div>
 
+                    {data.notes && data.notes.trim() !== '' && (
+                        <div className="my-8 page-break-avoid">
+                            <h3 className="text-xl font-serif font-bold text-center mb-4">הערות להסכם</h3>
+                            <div className="p-4 border rounded-md bg-gray-50 whitespace-pre-wrap">
+                                <p>{data.notes}</p>
+                            </div>
+                        </div>
+                    )}
+
                     <SubcontractorTerms managerName={subcontractor.managerName} />
 
                     <div className="text-center my-4 page-break-avoid"><p className="text-sm">עמוד 3 מתוך 3</p></div>

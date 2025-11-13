@@ -78,6 +78,7 @@ export interface SubcontractorProposalData {
     totalAmount: number;
     subcontractorId: string;
     projectId: string;
+    notes?: string;
 }
 
 export interface FinalSubcontractorProposalData extends SubcontractorProposalData {
