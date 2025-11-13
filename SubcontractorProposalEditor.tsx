@@ -67,7 +67,7 @@ const SubcontractorProposalEditor: React.FC = () => {
     const [projectId, setProjectId] = useState(initialData?.projectId || params.get('projectId') || '');
 
     const [workStartDate, setWorkStartDate] = useState(initialData?.workStartDate || '');
-    const [materials, setMaterials] = useState<MaterialClause>(initialData?.materials || { included: true, provider: 'main_contractor' });
+    const [materials, setMaterials] = useState<MaterialClause>(initialData?.materials || { included: false, provider: 'main_contractor' });
     const [workItems, setWorkItems] = useState<WorkItem[]>(initialData?.workItems || [{ id: crypto.randomUUID(), description: '', unit: UnitOfMeasure.UNIT, quantity: 1, price: 0 }]);
     const [paymentTerms, setPaymentTerms] = useState<PaymentTerm[]>(initialData?.paymentTerms || [{ id: crypto.randomUUID(), percentage: 100, milestone: 'בסיום כל העבודה ומסירת שטח נקי ללקוח' }]);
     const [notes, setNotes] = useState(initialData?.notes || '');
@@ -278,8 +278,8 @@ const SubcontractorProposalEditor: React.FC = () => {
                     <label className="font-bold block mb-2">אספקת חומרים:</label>
                     <div className="space-y-2">
                         <div>
-                            <label><input type="radio" name="included" checked={materials.included} onChange={() => setMaterials(p => ({...p, included: true}))} className="ml-2"/>כלולים במחיר</label>
-                            <label className="mr-4"><input type="radio" name="included" checked={!materials.included} onChange={() => setMaterials(p => ({...p, included: false}))} className="ml-2"/>אינם כלולים</label>
+                            <label><input type="radio" name="included" checked={!materials.included} onChange={() => setMaterials(p => ({...p, included: false}))} className="ml-2"/>אינם כלולים</label>
+                            <label className="mr-4"><input type="radio" name="included" checked={materials.included} onChange={() => setMaterials(p => ({...p, included: true}))} className="ml-2"/>כלולים במחיר</label>
                         </div>
                         <div>
                             <label><input type="radio" name="provider" checked={materials.provider === 'main_contractor'} onChange={() => setMaterials(p => ({...p, provider: 'main_contractor'}))} className="ml-2"/>יסופקו ע"י הקבלן הראשי</label>
