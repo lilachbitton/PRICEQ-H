@@ -2,6 +2,7 @@
 export enum UnitOfMeasure {
   UNIT = "יח'",
   METER = 'מטר',
+  DAY = 'יום',
   SQUARE_METER = 'מ"ר',
   GENERAL = 'כללי',
 }
