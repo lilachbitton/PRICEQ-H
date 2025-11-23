@@ -42,7 +42,7 @@ const SubcontractorProposalPreview: React.FC = () => {
             'ID_מסמך': data.documentId,
             'לינק למסמך חתום': finalLink,
             'מזהה_קבלן_CRM': data.subcontractorId,
-            'מזהה_פרויקט_CRM': data.projectId,
+            'מזהה_פרויקט_CRM': data.projectId, // Project ID included in webhook
         };
 
         try {

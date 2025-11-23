@@ -63,6 +63,7 @@ const SubcontractorProposalEditor: React.FC = () => {
         address: params.get('subAddress') || '',
         managerName: params.get('subManager') || '',
     });
+    // Ensure subcontractorId and projectId are captured from URL or initialData
     const [subcontractorId, setSubcontractorId] = useState(initialData?.subcontractorId || params.get('subcontractorId') || '');
     const [projectId, setProjectId] = useState(initialData?.projectId || params.get('projectId') || '');
 
@@ -185,7 +186,7 @@ const SubcontractorProposalEditor: React.FC = () => {
             'לינק לחתימת קבלן משנה': finalLink,
             'לינק לעריכת המסמך': editLink,
             'מזהה_קבלן_CRM': subcontractorId,
-            'מזהה_פרויקט_CRM': projectId,
+            'מזהה_פרויקט_CRM': projectId, // Project ID included in webhook
             'סה"כ ההסכם לפני מע"מ': totalAmount
         };
         
