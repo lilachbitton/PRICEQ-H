@@ -155,6 +155,7 @@ const SubcontractorProposalEditor: React.FC = () => {
         const encoded = encodeData(finalData);
         const longLink = `${window.location.origin}${window.location.pathname}#/subcontractor/preview/${encoded}`;
         const editLink = `${window.location.origin}${window.location.pathname}#/subcontractor/edit/${encoded}`;
+        const pdfCleanLink = `${longLink}?mode=pdf`;
         
         let finalLink = longLink;
 
@@ -186,8 +187,9 @@ const SubcontractorProposalEditor: React.FC = () => {
             'לינק לחתימת קבלן משנה': finalLink,
             'לינק לעריכת המסמך': editLink,
             'מזהה_קבלן_CRM': subcontractorId,
-            'מזהה_פרויקט_CRM': projectId, // Project ID included in webhook
-            'סה"כ ההסכם לפני מע"מ': totalAmount
+            'מזהה_פרויקט_CRM': projectId, 
+            'סה"כ ההסכם לפני מע"מ': totalAmount,
+            'pdfDownloadUrl': pdfCleanLink // Sends the raw, clean link for PDF generation tools
         };
         
         try {

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 // FIX: Import SubcontractorProposalData from types.ts for consistency and remove local definition.
 import { WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorSignatoryDetails, SubcontractorProposalData } from './types';
 import { Watermark } from './SharedComponents';
@@ -13,6 +13,8 @@ const SUBCONTRACTOR_WEBHOOK_URL = 'https://hook.eu2.make.com/5uadx69swrpxp2wt58i
 const SubcontractorProposalPreview: React.FC = () => {
     const { data: encodedData } = useParams<{ data: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
+    
     // FIX: Use SubcontractorProposalData type.
     const data = useMemo(() => decodeData<SubcontractorProposalData>(encodedData), [encodedData]);
 
@@ -23,6 +25,11 @@ const SubcontractorProposalPreview: React.FC = () => {
     const handleSignatureChange = useCallback((signature: string) => {
         setSignatory(prev => ({ ...prev, signature }));
     }, []);
+
+    // Check if we are in PDF generation mode
+    const isPdfMode = useMemo(() => {
+        return new URLSearchParams(location.search).get('mode') === 'pdf';
+    }, [location.search]);
 
     if (!data) return <div className="text-center p-10 bg-white shadow-lg rounded-md"><h2 className="text-2xl font-bold text-red-600">שגיאה בנתונים</h2></div>;
 
@@ -36,13 +43,15 @@ const SubcontractorProposalPreview: React.FC = () => {
         const finalData = { ...data, signatory };
         const encodedFinalData = encodeData(finalData);
         const finalLink = `${window.location.origin}${window.location.pathname}#/subcontractor/final/${encodedFinalData}`;
+        const pdfCleanLink = `${finalLink}?mode=pdf`;
 
         const payload = {
             'שלב': 'הסכם קבלן משנה נחתם',
             'ID_מסמך': data.documentId,
             'לינק למסמך חתום': finalLink,
             'מזהה_קבלן_CRM': data.subcontractorId,
-            'מזהה_פרויקט_CRM': data.projectId, // Project ID included in webhook
+            'מזהה_פרויקט_CRM': data.projectId, 
+            'pdfDownloadUrl': pdfCleanLink
         };
 
         try {
@@ -173,17 +182,19 @@ const SubcontractorProposalPreview: React.FC = () => {
 
                 </div>
             </div>
-             <div className="my-8 flex flex-col md:flex-row justify-center items-center gap-4 print:hidden max-w-4xl mx-auto">
-                <button onClick={handleConfirm} disabled={!isFormValid || isSubmitting} className="bg-green-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-700 disabled:bg-gray-400 order-1 w-full">
-                    {isSubmitting ? 'שולח...' : 'אשר וחתום על ההסכם'}
-                </button>
-                <button
-                    onClick={() => navigate(`/subcontractor/edit/${encodedData}`)}
-                    className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors order-2 w-full md:w-auto"
-                >
-                    חזור לעריכה
-                </button>
-            </div>
+             {!isPdfMode && (
+                 <div className="my-8 flex flex-col md:flex-row justify-center items-center gap-4 print:hidden max-w-4xl mx-auto">
+                    <button onClick={handleConfirm} disabled={!isFormValid || isSubmitting} className="bg-green-600 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-700 disabled:bg-gray-400 order-1 w-full">
+                        {isSubmitting ? 'שולח...' : 'אשר וחתום על ההסכם'}
+                    </button>
+                    <button
+                        onClick={() => navigate(`/subcontractor/edit/${encodedData}`)}
+                        className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors order-2 w-full md:w-auto"
+                    >
+                        חזור לעריכה
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

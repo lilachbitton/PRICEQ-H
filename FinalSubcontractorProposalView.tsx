@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 // FIX: Import FinalSubcontractorProposalData from types.ts for consistency and remove local definition.
 import { WorkItem, PaymentTerm, SubcontractorDetails, MaterialClause, SubcontractorSignatoryDetails, FinalSubcontractorProposalData } from './types';
 import { Watermark } from './SharedComponents';
@@ -9,8 +9,15 @@ import { decodeData } from './App';
 const FinalSubcontractorProposalView: React.FC = () => {
     const { data: encodedData } = useParams<{ data: string }>();
     const navigate = useNavigate();
+    const location = useLocation();
+
     // FIX: Use FinalSubcontractorProposalData type.
     const data = useMemo(() => decodeData<FinalSubcontractorProposalData>(encodedData), [encodedData]);
+
+    // Check if we are in PDF generation mode
+    const isPdfMode = useMemo(() => {
+        return new URLSearchParams(location.search).get('mode') === 'pdf';
+    }, [location.search]);
 
     if (!data) return <div className="text-center p-10 bg-white shadow-lg rounded-md"><h2 className="text-2xl font-bold text-red-600">שגיאה בנתונים</h2></div>;
 
@@ -119,10 +126,12 @@ const FinalSubcontractorProposalView: React.FC = () => {
 
                 </div>
             </div>
-             <div className="mt-8 flex justify-between items-center print:hidden max-w-4xl mx-auto">
-                <button onClick={() => navigate(-1)} className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600">חזרה</button>
-                <button onClick={() => window.print()} className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">הדפס הסכם</button>
-            </div>
+             {!isPdfMode && (
+                 <div className="mt-8 flex justify-between items-center print:hidden max-w-4xl mx-auto">
+                    <button onClick={() => navigate(-1)} className="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600">חזרה</button>
+                    <button onClick={() => window.print()} className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">הדפס הסכם</button>
+                </div>
+            )}
         </div>
     );
 };
