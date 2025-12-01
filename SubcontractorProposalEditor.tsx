@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 // FIX: Import SubcontractorProposalData to correctly type the initial data from the URL.
@@ -51,21 +52,28 @@ const SubcontractorProposalEditor: React.FC = () => {
     const [proposalDate, setProposalDate] = useState(initialData?.proposalDate || new Date().toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' }));
     const [workTitle, setWorkTitle] = useState(initialData?.workTitle || params.get('workTitle') || '');
     const [projectAddress, setProjectAddress] = useState(initialData?.projectAddress || params.get('projectAddress') || '');
+    
+    // Improved client name parsing to support full name parameter as well
     const [clientName, setClientName] = useState(() => {
         if (initialData) return initialData.clientName;
+        const paramName = params.get('clientName') || params.get('customerName') || params.get('fullName');
+        if (paramName) return paramName;
         const firstName = params.get('firstName') || '';
         const lastName = params.get('lastName') || '';
         return [firstName, lastName].filter(Boolean).join(' ').trim();
     });
+
     const [subcontractor, setSubcontractor] = useState<SubcontractorDetails>(initialData?.subcontractor || {
         name: params.get('subName') || '',
         idNumber: params.get('subId') || '',
         address: params.get('subAddress') || '',
         managerName: params.get('subManager') || '',
     });
-    // Ensure subcontractorId and projectId are captured from URL or initialData
+
+    // Improved ID parsing to support common variations (snake_case, camelCase)
     const [subcontractorId, setSubcontractorId] = useState(initialData?.subcontractorId || params.get('subcontractorId') || '');
-    const [projectId, setProjectId] = useState(initialData?.projectId || params.get('projectId') || '');
+    const [projectId, setProjectId] = useState(initialData?.projectId || params.get('projectId') || params.get('project_id') || '');
+    const [leadId, setLeadId] = useState(initialData?.leadId || params.get('leadId') || params.get('lead_id') || params.get('clientId') || params.get('contactId') || '');
 
     const [workStartDate, setWorkStartDate] = useState(initialData?.workStartDate || '');
     const [materials, setMaterials] = useState<MaterialClause>(initialData?.materials || { included: false, provider: 'main_contractor' });
@@ -136,6 +144,7 @@ const SubcontractorProposalEditor: React.FC = () => {
             totalAmount,
             subcontractorId,
             projectId,
+            leadId,
             notes,
         };
         
@@ -187,7 +196,8 @@ const SubcontractorProposalEditor: React.FC = () => {
             'לינק לחתימת קבלן משנה': finalLink,
             'לינק לעריכת המסמך': editLink,
             'מזהה_קבלן_CRM': subcontractorId,
-            'מזהה_פרויקט_CRM': projectId, 
+            'מזהה_פרויקט_CRM': projectId,
+            'מזהה_לקוח_CRM': leadId,
             'סה"כ ההסכם לפני מע"מ': totalAmount,
             'pdfDownloadUrl': pdfCleanLink // Sends the raw, clean link for PDF generation tools
         };
@@ -239,6 +249,7 @@ const SubcontractorProposalEditor: React.FC = () => {
         <div className="bg-white shadow-xl rounded-lg p-4 md:p-8 my-10" dir="rtl">
             <input type="hidden" name="subcontractorId" value={subcontractorId} />
             <input type="hidden" name="projectId" value={projectId} />
+            <input type="hidden" name="leadId" value={leadId} />
              <div className="text-left mb-4">
                 <Link to="/" className="text-sm text-blue-600 hover:underline font-semibold">
                     &larr; עבור ליצירת הצעת מחיר ללקוח
@@ -329,7 +340,14 @@ const SubcontractorProposalEditor: React.FC = () => {
                 />
             </div>
 
-            <div className="mt-12 text-center">
+             {/* Debug/Verification Info */}
+            <div className="mb-6 p-2 text-xs text-gray-400 border-t mt-12 flex gap-4 justify-center">
+                <span>Project ID: {projectId || '---'}</span>
+                <span>Client ID: {leadId || '---'}</span>
+                <span>Subcontractor ID: {subcontractorId || '---'}</span>
+            </div>
+
+            <div className="mt-4 text-center">
                 <button 
                     onClick={handleGenerateLink} 
                     disabled={!isPaymentScheduleValid || totalAmount <= 0 || !!generatedLink || isGenerating} 
