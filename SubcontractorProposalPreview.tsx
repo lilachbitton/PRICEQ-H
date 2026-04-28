@@ -90,7 +90,7 @@ const SubcontractorProposalPreview: React.FC = () => {
                     <p>והואיל ומר <strong className="font-semibold">{subcontractor.managerName}</strong> – קבלן המשנה מצהיר כי בדק את השטח באתר, קיבל הסברים, ראה את העבודה והרי הוא מעוניין לבצע את העבודה הנ"ל, ובכתובת הנ"ל עבור חגי תדמור מעיין גנים בע"מ.</p>
 
                     <h2 className="font-bold text-lg mt-6 mb-2 underline">הוסכם בין הצדדים כדלקמן:</h2>
-                    <p>קבלן המשנה יבצע את עבודות הריצוף החל מתאריך <strong className="font-semibold">{formattedStartDate}</strong>, ויבצע אותה באופן רצוף בכל ימי העבודה הבאים.</p>
+                    <p>קבלן המשנה יבצע את עבודות <strong className="font-semibold">{data.workTitle}</strong> החל מתאריך <strong className="font-semibold">{formattedStartDate}</strong>, ויבצע אותה באופן רצוף בכל ימי העבודה הבאים.</p>
                     <p>כל החומרים לעבודה <strong className="font-semibold">{data.materials.included ? 'כלולים' : 'אינם כלולים'}</strong> במחיר העבודה ויסופקו ע"י <strong className="font-semibold">{data.materials.provider === 'main_contractor' ? 'הקבלן הראשי' : 'קבלן המשנה'}</strong>.</p>
                     
                     <div className="my-8 page-break-avoid">
